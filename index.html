@@ -18,6 +18,7 @@
     --text: #e8e8f0;
     --muted: #5a5a7a;
     --forge: #ff6a00;
+    --story: #00ffb2;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -141,6 +142,7 @@
   .panel.p-tech::after { background: var(--accent4); }
   .panel.p-chaos::after { background: var(--forge); }
   .panel.p-neg::after { background: var(--muted); }
+  .panel.p-story::after { background: var(--story); }
 
   .panel-label {
     font-family: 'Bebas Neue', cursive;
@@ -165,6 +167,7 @@
   .p-tech .dot { background: var(--accent4); }
   .p-chaos .dot { background: var(--forge); }
   .p-neg .dot { background: var(--muted); }
+  .p-story .dot { background: var(--story); }
 
   /* TAGS */
   .tag-cloud {
@@ -196,6 +199,9 @@
   .p-mood .tag.selected { background: var(--accent3); color: var(--bg); }
   .p-tech .tag.selected { background: var(--accent4); }
   .p-neg .tag.selected { background: #333; color: var(--accent1); border-color: var(--accent1); }
+  .p-story .tag.selected { background: var(--story); color: var(--bg); }
+
+  .prompt-display .highlight-story { color: var(--story); }
 
   .tag-input {
     width: 100%;
@@ -261,6 +267,89 @@
     width: 28px;
     text-align: right;
     flex-shrink: 0;
+  }
+
+  /* STORY PANEL */
+  .p-story {
+    grid-column: 1 / -1;
+    display: none;
+  }
+
+  .p-story.visible { display: block; }
+
+  .story-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 700px) {
+    .story-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .story-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .story-section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--story);
+    opacity: 0.7;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .story-tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .story-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .story-tag:hover { color: var(--story); border-color: var(--story); }
+  .story-tag.selected { background: var(--story); color: var(--bg); border-color: transparent; }
+
+  .story-textarea {
+    width: 100%;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    padding: 10px 12px;
+    border-radius: 3px;
+    outline: none;
+    resize: vertical;
+    min-height: 64px;
+    line-height: 1.6;
+    transition: border-color 0.2s;
+  }
+
+  .story-textarea:focus { border-color: var(--story); }
+  .story-textarea::placeholder { color: var(--muted); }
+
+  .story-textarea-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    margin-top: 12px;
+    text-transform: uppercase;
   }
 
   /* CHAOS PANEL */
@@ -581,6 +670,7 @@
       <button class="mode-tab" data-mode="music">MUSIC</button>
       <button class="mode-tab" data-mode="video">VIDEO</button>
     </div>
+    <a href="https://maximumreality.xyz" class="home-btn" title="maximumreality.xyz">⌂</a>
   </header>
 
   <div class="forge-grid" id="forge-grid">
@@ -635,6 +725,7 @@
         <button class="chaos-btn" onclick="randomizeSection('subject')">RANDOM SUBJECT</button>
         <button class="chaos-btn" onclick="randomizeSection('style')">RANDOM STYLE</button>
         <button class="chaos-btn" onclick="randomizeSection('mood')">RANDOM MOOD</button>
+        <button class="chaos-btn" id="chaos-story-btn" style="display:none" onclick="randomizeStory()">RANDOM STORY</button>
       </div>
       <div class="intensity-bar"><div class="intensity-fill" id="intensity-fill" style="width: 40%"></div></div>
       <div class="intensity-label"><span>CALM</span><span id="intensity-label-val">INTENSITY: 40%</span><span>CHAOS</span></div>
@@ -645,6 +736,16 @@
       <div class="panel-label"><div class="dot"></div> EXCLUDE / NEGATIVE</div>
       <div class="tag-cloud" id="neg-tags"></div>
       <input class="tag-input" id="neg-input" placeholder="things to avoid…" />
+    </div>
+
+    <!-- STORY (video only) -->
+    <div class="panel p-story" id="story-panel">
+      <div class="panel-label"><div class="dot"></div> NARRATIVE / STORY</div>
+      <div class="story-grid" id="story-grid">
+        <!-- rendered by JS -->
+      </div>
+      <div class="story-textarea-label">FREE-WRITE YOUR NARRATIVE</div>
+      <textarea class="story-textarea" id="story-freewrite" placeholder="describe the story arc, key moments, emotional journey… anything goes" rows="3"></textarea>
     </div>
 
   </div>
@@ -696,6 +797,13 @@ const MODE_DATA = {
     style: ['handheld', 'drone', 'archival', 'noir', 'neon-lit', 'desaturated', 'hyper-saturated', 'double exposure', 'split screen', 'one-shot', 'montage', 'found footage'],
     mood: ['tense', 'lyrical', 'playful', 'eerie', 'intimate', 'epic', 'melancholic', 'frenetic', 'contemplative', 'dreamlike', 'raw', 'euphoric'],
     tech: ['4K 120fps', 'anamorphic lens', 'color grade', 'rack focus', 'dutch angle', 'motivated lighting', 'practical FX', 'seamless loop', 'long exposure'],
+    story: {
+      character: ['lone wanderer', 'unlikely hero', 'fallen idol', 'silent witness', 'shapeshifter', 'the last one', 'twin souls', 'the outsider', 'ghost', 'child'],
+      arc: ['descent', 'rebirth', 'obsession', 'escape', 'pursuit', 'sacrifice', 'awakening', 'loss', 'revenge', 'acceptance', 'collision', 'unraveling'],
+      setting: ['abandoned city', 'deep ocean', 'infinite desert', 'mirror world', 'dying planet', 'neon underground', 'ancient forest', 'void', 'crowded station', 'rooftop'],
+      conflict: ['inner demons', 'time running out', 'betrayal', 'unstoppable force', 'forbidden desire', 'memory loss', 'identity fracture', 'the unknown', 'silence', 'fire'],
+      ending: ['ambiguous', 'tragic', 'transcendent', 'cyclical', 'violent', 'quiet', 'hopeful', 'dissolves', 'cut to black', 'never ends'],
+    }
   }
 };
 
@@ -710,6 +818,7 @@ let currentMode = 'image';
 let selectedTags = { subject: [], style: [], mood: [], tech: [], neg: [] };
 let customTags = { subject: [], style: [], mood: [], tech: [], neg: [] };
 let sliders = { quality: 8, detail: 7, weird: 4 };
+let selectedStory = { character: [], arc: [], setting: [], conflict: [], ending: [] };
 
 // ═══════════════════════════════
 // INIT
@@ -719,6 +828,7 @@ function init() {
   setupSliders();
   setupInputs();
   setupModes();
+  setupStoryTextarea();
   updatePrompt();
 }
 
@@ -739,7 +849,41 @@ function renderAllTags() {
     <div class="tag ${selectedTags.neg.includes(tag) ? 'selected' : ''}"
          onclick="toggleTag('neg', '${tag}', this)">${tag}</div>
   `).join('');
+
+  renderStoryPanel();
 }
+
+function renderStoryPanel() {
+  const panel = document.getElementById('story-panel');
+  const grid = document.getElementById('story-grid');
+
+  if (currentMode !== 'video') {
+    panel.classList.remove('visible');
+    return;
+  }
+
+  panel.classList.add('visible');
+  const storyData = MODE_DATA.video.story;
+  const labels = { character: 'CHARACTER', arc: 'ARC / JOURNEY', setting: 'SETTING / WORLD', conflict: 'CONFLICT', ending: 'ENDING' };
+
+  grid.innerHTML = Object.entries(storyData).map(([key, tags]) => `
+    <div>
+      <div class="story-section-label">${labels[key]}</div>
+      <div class="story-tag-cloud" id="story-${key}-tags">
+        ${tags.map(tag => `
+          <div class="story-tag ${selectedStory[key].includes(tag) ? 'selected' : ''}"
+               onclick="toggleStoryTag('${key}', '${tag}', this)">${tag}</div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function setupStoryTextarea() {
+  const ta = document.getElementById('story-freewrite');
+  ta.addEventListener('input', () => updatePrompt());
+}
+
 
 function setupSliders() {
   ['quality', 'detail', 'weird'].forEach(name => {
@@ -782,6 +926,10 @@ function setupModes() {
       btn.classList.add('active');
       currentMode = btn.dataset.mode;
       selectedTags = { subject: [], style: [], mood: [], tech: [], neg: [] };
+      selectedStory = { character: [], arc: [], setting: [], conflict: [], ending: [] };
+      document.getElementById('story-freewrite').value = '';
+      const storyBtn = document.getElementById('chaos-story-btn');
+      storyBtn.style.display = currentMode === 'video' ? 'block' : 'none';
       renderAllTags();
       updatePrompt();
       const badge = document.getElementById('mode-badge');
@@ -809,9 +957,21 @@ function toggleTag(cat, tag, el) {
   updateIntensity();
 }
 
-// ═══════════════════════════════
-// PROMPT ASSEMBLY
-// ═══════════════════════════════
+function toggleStoryTag(cat, tag, el) {
+  const idx = selectedStory[cat].indexOf(tag);
+  if (idx > -1) {
+    selectedStory[cat].splice(idx, 1);
+    el.classList.remove('selected');
+  } else {
+    selectedStory[cat].push(tag);
+    el.classList.add('selected');
+    sparkle(el.getBoundingClientRect().left + 20, el.getBoundingClientRect().top + 10);
+  }
+  updatePrompt();
+  updateIntensity();
+}
+
+
 function buildPrompt() {
   const parts = [];
 
@@ -828,6 +988,17 @@ function buildPrompt() {
   if (sliders.weird > 1) parts.push(`<span class="highlight-chaos">${weirdWord}</span>`);
 
   if (selectedTags.tech.length) parts.push(`<span class="highlight-tech">${selectedTags.tech.join(', ')}</span>`);
+
+  // STORY (video only)
+  const storyParts = [];
+  if (selectedStory.character.length) storyParts.push(`protagonist: ${selectedStory.character.join(' / ')}`);
+  if (selectedStory.setting.length) storyParts.push(`world: ${selectedStory.setting.join(', ')}`);
+  if (selectedStory.arc.length) storyParts.push(`arc: ${selectedStory.arc.join(' → ')}`);
+  if (selectedStory.conflict.length) storyParts.push(`conflict: ${selectedStory.conflict.join(', ')}`);
+  if (selectedStory.ending.length) storyParts.push(`ending: ${selectedStory.ending.join(' / ')}`);
+  const freewrite = document.getElementById('story-freewrite')?.value?.trim();
+  if (freewrite) storyParts.push(freewrite);
+  if (storyParts.length) parts.push(`<span class="highlight-story">[ STORY — ${storyParts.join(' | ')} ]</span>`);
 
   if (selectedTags.neg.length) parts.push(`<span style="color:var(--muted)">–– NO: ${selectedTags.neg.join(', ')}</span>`);
 
@@ -849,6 +1020,16 @@ function buildPlainPrompt() {
   if (sliders.weird > 1) parts.push(weirdWord);
   if (selectedTags.tech.length) parts.push(selectedTags.tech.join(', '));
 
+  const storyParts = [];
+  if (selectedStory.character.length) storyParts.push(`protagonist: ${selectedStory.character.join(' / ')}`);
+  if (selectedStory.setting.length) storyParts.push(`world: ${selectedStory.setting.join(', ')}`);
+  if (selectedStory.arc.length) storyParts.push(`arc: ${selectedStory.arc.join(' → ')}`);
+  if (selectedStory.conflict.length) storyParts.push(`conflict: ${selectedStory.conflict.join(', ')}`);
+  if (selectedStory.ending.length) storyParts.push(`ending: ${selectedStory.ending.join(' / ')}`);
+  const freewrite = document.getElementById('story-freewrite')?.value?.trim();
+  if (freewrite) storyParts.push(freewrite);
+  if (storyParts.length) parts.push(`[ STORY — ${storyParts.join(' | ')} ]`);
+
   let prompt = parts.join(', ');
   if (selectedTags.neg.length) prompt += ` --no ${selectedTags.neg.join(', ')}`;
   return prompt;
@@ -857,7 +1038,7 @@ function buildPlainPrompt() {
 function updatePrompt() {
   const display = document.getElementById('prompt-display');
   const html = buildPrompt();
-  const allSelected = Object.values(selectedTags).flat();
+  const allSelected = [...Object.values(selectedTags).flat(), ...Object.values(selectedStory).flat()];
 
   if (!html || allSelected.length === 0) {
     display.innerHTML = '<span class="prompt-placeholder">select tags above — your prompt assembles here in real time…</span>';
@@ -875,7 +1056,7 @@ function updatePrompt() {
 // INTENSITY
 // ═══════════════════════════════
 function updateIntensity() {
-  const tagCount = Object.values(selectedTags).flat().length;
+  const tagCount = [...Object.values(selectedTags).flat(), ...Object.values(selectedStory).flat()].length;
   const sliderAvg = (sliders.quality + sliders.detail + sliders.weird) / 3;
   const raw = Math.min(100, Math.round((tagCount * 5) + (sliderAvg * 4)));
   document.getElementById('intensity-fill').style.width = raw + '%';
@@ -908,6 +1089,7 @@ function randomizeAll() {
   document.getElementById('sv-weird').textContent = sliders.weird;
 
   renderAllTags();
+  if (currentMode === 'video') randomizeStory();
   updatePrompt();
   updateIntensity();
 
@@ -927,9 +1109,21 @@ function randomizeSection(cat) {
   updateIntensity();
 }
 
-// ═══════════════════════════════
-// AI POLISH
-// ═══════════════════════════════
+function randomizeStory() {
+  const storyData = MODE_DATA.video.story;
+  Object.keys(selectedStory).forEach(key => {
+    const pool = storyData[key];
+    selectedStory[key] = pool.sort(() => 0.5 - Math.random()).slice(0, 1 + Math.floor(Math.random() * 2));
+  });
+  renderStoryPanel();
+  updatePrompt();
+  updateIntensity();
+  for (let i = 0; i < 5; i++) {
+    setTimeout(() => sparkle(Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.7), i * 70);
+  }
+}
+
+
 async function aiPolish() {
   const plain = buildPlainPrompt();
   if (!plain || plain.trim().length === 0) {
@@ -1020,6 +1214,9 @@ function copyPrompt() {
 function clearAll() {
   selectedTags = { subject: [], style: [], mood: [], tech: [], neg: [] };
   customTags = { subject: [], style: [], mood: [], tech: [], neg: [] };
+  selectedStory = { character: [], arc: [], setting: [], conflict: [], ending: [] };
+  const ta = document.getElementById('story-freewrite');
+  if (ta) ta.value = '';
   sliders = { quality: 8, detail: 7, weird: 4 };
   ['quality', 'detail', 'weird'].forEach(n => {
     document.getElementById(`sl-${n}`).value = sliders[n];

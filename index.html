@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PROMPT FORGE</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Share+Tech+Mono&family=Bebas+Neue&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://js.puter.com/v2/"></script>
 <style>
   :root {
     --bg: #0a0a0c;
@@ -106,6 +107,23 @@
   .mode-tab[data-mode="video"].active { background: var(--accent4); }
 
   .mode-tab:hover:not(.active) { color: var(--text); background: var(--panel2); }
+
+  .home-btn {
+    font-size: 18px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    line-height: 1;
+    transition: all 0.2s;
+  }
+
+  .home-btn:hover {
+    color: var(--text);
+    border-color: var(--accent2);
+    box-shadow: 0 0 10px rgba(0,229,255,0.2);
+  }
 
   /* MAIN GRID */
   .forge-grid {
@@ -1138,32 +1156,17 @@ async function aiPolish() {
   status.className = 'ai-status active';
   status.textContent = '✦ AI polishing your prompt…';
 
-  const modeGuide = {
-    image: 'Midjourney or Stable Diffusion image generation',
-    music: 'AI music generation (like Suno or Udio)',
-    video: 'AI video generation (like Runway or Sora)'
-  };
-
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{
-          role: "user",
-          content: `You are a master prompt engineer for ${modeGuide[currentMode]}. 
+    const modeGuide = {
+      image: 'Midjourney or Stable Diffusion image generation',
+      music: 'AI music generation (like Suno or Udio)',
+      video: 'AI video generation (like Runway or Sora)'
+    };
 
-Take these raw prompt ingredients and forge them into a single, powerful, evocative prompt. Keep it under 80 words. Make it vivid and specific. Preserve the intent and aesthetic direction. Return ONLY the polished prompt, nothing else.
+    const systemPrompt = `You are a master prompt engineer for ${modeGuide[currentMode]}. Take these raw prompt ingredients and forge them into a single, powerful, evocative prompt. Keep it under 80 words. Make it vivid and specific. Preserve the intent and aesthetic direction. Return ONLY the polished prompt, nothing else.`;
 
-Raw ingredients: ${plain}`
-        }]
-      })
-    });
-
-    const data = await response.json();
-    const polished = data.content?.find(b => b.type === 'text')?.text?.trim();
+    const response = await puter.ai.chat(`${systemPrompt}\n\nRaw ingredients: ${plain}`);
+    const polished = typeof response === 'string' ? response.trim() : response?.message?.content?.[0]?.text?.trim() ?? response?.text?.trim();
 
     if (polished) {
       display.classList.remove('loading');
@@ -1171,7 +1174,6 @@ Raw ingredients: ${plain}`
       status.className = 'ai-status done';
       status.textContent = '✦ AI polish complete';
       document.getElementById('word-count').textContent = polished.split(/\s+/).filter(Boolean).length;
-
       setTimeout(() => { status.textContent = ''; status.className = 'ai-status'; }, 3000);
       sparkle(window.innerWidth / 2, window.innerHeight / 2);
     }

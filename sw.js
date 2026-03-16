@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v4";
+const CACHE_VERSION = "v4.1";
 const CACHE_NAME = `prompt-forge-${CACHE_VERSION}`;
 const FONT_CACHE = `prompt-forge-fonts-${CACHE_VERSION}`;
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="manifest" href="/prompt/manifest.json">
+  <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0a0a0c">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -898,8 +898,18 @@ init();
 </script>
 <script>
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/prompt/sw.js")
-    .then(() => console.log("Prompt Forge SW registered"))
+  navigator.serviceWorker.register("./sw.js")
+    .then(reg => {
+      console.log("Prompt Forge SW registered", reg);
+
+      navigator.serviceWorker.addEventListener("message", event => {
+        if (event.data?.type === "NEW_VERSION") {
+          console.log("New version installed");
+          location.reload();
+        }
+      });
+
+    })
     .catch(err => console.log("SW error", err));
 }
 </script>

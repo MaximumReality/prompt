@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="manifest" href="/prompt/manifest.json">
+<meta name="theme-color" content="#0a0a0c">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PROMPT FORGE</title>
@@ -1274,6 +1276,13 @@ function sparkle(x, y) {
 }
 
 init();
+</script>
+  <script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/prompt/sw.js")
+    .then(() => console.log("Prompt Forge SW registered"))
+    .catch(err => console.log("SW error", err));
+}
 </script>
 </body>
 </html>

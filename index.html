@@ -2,39 +2,28 @@
 <html lang="en">
 <head>
   <link rel="manifest" href="/prompt/manifest.json">
-<meta name="theme-color" content="#0a0a0c">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROMPT FORGE</title>
-  <!-- Primary Meta -->
-<meta name="title" content="Prompt Forge — Maximum Reality">
-<meta name="description" content="Forge powerful AI prompts for image, music, and video generation. Shape chaos into creation with dynamic tag systems, narrative engines, and intensity controls.">
-
-<!-- Favicon -->
-<link rel="icon" type="image/png" href="https://maximumreality.github.io/prompt/prompt-forge-favicon.PNG">
-
-<!-- Open Graph / Social -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://maximumreality.github.io/prompt/">
-<meta property="og:title" content="Prompt Forge — Forge AI Prompts in Real Time">
-<meta property="og:description" content="Create cinematic prompts for AI art, music, and video with an interactive chaos engine and narrative builder.">
-<meta property="og:image" content="https://maximumreality.github.io/prompt/prompt-forge-favicon.PNG">
-
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://maximumreality.github.io/prompt/">
-<meta property="twitter:title" content="Prompt Forge — AI Prompt Generator">
-<meta property="twitter:description" content="Shape chaos into powerful AI prompts. Image, music, and video prompt engineering in one tool.">
-<meta property="twitter:image" content="https://maximumreality.github.io/prompt/prompt-forge-favicon.PNG">
-
-<!-- Mobile / PWA polish -->
-<meta name="theme-color" content="#0a0a0c">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Prompt Forge">
-<link rel="apple-touch-icon" href="https://maximumreality.github.io/prompt/prompt-forge-favicon.PNG">
-<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Share+Tech+Mono&family=Bebas+Neue&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-<script src="https://js.puter.com/v2/"></script>
+  <meta name="theme-color" content="#0a0a0c">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PROMPT FORGE</title>
+  <meta name="title" content="Prompt Forge — Maximum Reality">
+  <meta name="description" content="Forge powerful AI prompts for image, music, and video generation.">
+  <link rel="icon" type="image/png" href="https://maximumreality.github.io/prompt/prompt-forge-favicon.PNG">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://maximumreality.github.io/prompt/">
+  <meta property="og:title" content="Prompt Forge — Forge AI Prompts in Real Time">
+  <meta property="og:description" content="Create cinematic prompts for AI art, music, video and animation.">
+  <meta property="og:image" content="https://maximumreality.github.io/prompt/prompt-forge-favicon.PNG">
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://maximumreality.github.io/prompt/">
+  <meta property="twitter:title" content="Prompt Forge — AI Prompt Generator">
+  <meta property="twitter:image" content="https://maximumreality.github.io/prompt/prompt-forge-favicon.PNG">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Prompt Forge">
+  <link rel="apple-touch-icon" href="https://maximumreality.github.io/prompt/prompt-forge-favicon.PNG">
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Share+Tech+Mono&family=Bebas+Neue&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://js.puter.com/v2/"></script>
 <style>
   :root {
     --bg: #0a0a0c;
@@ -49,6 +38,22 @@
     --muted: #5a5a7a;
     --forge: #ff6a00;
     --story: #00ffb2;
+    --anim: #ff00cc;
+    --mr: #39ff14;
+  }
+
+  body.mr-active {
+    --bg: #050a02;
+    --panel: #0a120a;
+    --panel2: #0e180c;
+    --border: #1a3a14;
+    --accent1: #ff00ff;
+    --accent2: #39ff14;
+    --accent3: #ffe600;
+    --accent4: #00ffff;
+    --text: #ccffcc;
+    --muted: #3a6a30;
+    --forge: #ff6a00;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -60,129 +65,129 @@
     min-height: 100vh;
     overflow-x: hidden;
     cursor: crosshair;
+    transition: background 0.4s, color 0.4s;
   }
 
-  /* NOISE OVERLAY */
+  /* MR scanlines */
+  body.mr-active::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(57,255,20,0.025) 2px, rgba(57,255,20,0.025) 4px);
+    pointer-events: none;
+    z-index: 9998;
+    animation: scanroll 10s linear infinite;
+  }
+  @keyframes scanroll { 0% { background-position: 0 0; } 100% { background-position: 0 100px; } }
+
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 9999;
-    opacity: 0.4;
+    opacity: 0.5;
   }
 
-  /* HEADER */
   .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 24px 12px;
+    padding: 16px 20px 12px;
     border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
-    background: rgba(10,10,12,0.95);
+    background: rgba(10,10,12,0.96);
     backdrop-filter: blur(12px);
     z-index: 100;
+    transition: background 0.4s, border-color 0.4s;
+    flex-wrap: wrap;
+    gap: 8px;
   }
+  body.mr-active .header { background: rgba(5,10,2,0.97); }
+
+  .header-left { display: flex; align-items: center; gap: 10px; }
 
   .logo {
     font-family: 'Black Ops One', cursive;
-    font-size: 28px;
+    font-size: 24px;
     letter-spacing: 4px;
     background: linear-gradient(90deg, var(--forge), var(--accent1), var(--accent2));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-shadow: none;
     animation: logopulse 3s ease-in-out infinite;
   }
+  @keyframes logopulse { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.3); } }
 
-  @keyframes logopulse {
-    0%,100% { filter: brightness(1); }
-    50% { filter: brightness(1.3); }
+  body.mr-active .logo {
+    background: linear-gradient(90deg, #ff00ff, #39ff14, #00ffff, #ffe600);
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: logopulse 3s ease-in-out infinite, mrglitch 2.5s steps(1) infinite;
+  }
+  @keyframes mrglitch {
+    0%,88%,100% { transform: translate(0,0) skew(0deg); }
+    90% { transform: translate(-3px,1px) skew(-2deg); filter: hue-rotate(90deg); }
+    92% { transform: translate(3px,-1px) skew(2deg); filter: hue-rotate(180deg); }
+    94% { transform: translate(0,0) skew(0deg); }
   }
 
-  .mode-tabs {
-    display: flex;
-    gap: 4px;
-    background: var(--panel);
-    border-radius: 6px;
-    padding: 3px;
-    border: 1px solid var(--border);
-  }
-
-  .mode-tab {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 1px;
-    padding: 6px 12px;
-    border-radius: 4px;
-    border: none;
+  /* MR TOGGLE */
+  .mr-toggle-btn {
+    font-family: 'Bebas Neue', cursive;
+    letter-spacing: 2px;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(57,255,20,0.3);
     background: transparent;
-    color: var(--muted);
+    color: rgba(57,255,20,0.55);
     cursor: pointer;
     transition: all 0.2s;
-    text-transform: uppercase;
+    white-space: nowrap;
   }
+  .mr-toggle-btn:hover { color: #39ff14; border-color: #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.2); }
+  .mr-toggle-btn.active { background: #39ff14; color: #000; border-color: #39ff14; font-weight: 700; animation: mrpulse 1.2s ease-in-out infinite; }
+  @keyframes mrpulse { 0%,100% { box-shadow: 0 0 12px rgba(57,255,20,0.5); } 50% { box-shadow: 0 0 24px rgba(57,255,20,0.9); } }
 
-  .mode-tab.active {
-    color: var(--bg);
-    font-weight: 700;
-  }
+  .mode-tabs { display: flex; gap: 3px; background: var(--panel); border-radius: 6px; padding: 3px; border: 1px solid var(--border); transition: background 0.4s, border-color 0.4s; }
+  .mode-tab { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 1px; padding: 6px 11px; border-radius: 4px; border: none; background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
+  .mode-tab.active { color: #000; font-weight: 700; }
   .mode-tab[data-mode="image"].active { background: var(--accent1); }
-  .mode-tab[data-mode="music"].active { background: var(--accent2); color: var(--bg); }
+  .mode-tab[data-mode="music"].active { background: var(--accent2); }
   .mode-tab[data-mode="video"].active { background: var(--accent4); }
-
+  .mode-tab[data-mode="animation"].active { background: var(--anim); }
   .mode-tab:hover:not(.active) { color: var(--text); background: var(--panel2); }
 
-  .home-btn {
-    font-size: 18px;
-    color: var(--muted);
-    text-decoration: none;
-    padding: 6px 10px;
-    border-radius: 4px;
-    border: 1px solid var(--border);
-    line-height: 1;
-    transition: all 0.2s;
-  }
+  .home-btn { font-size: 18px; color: var(--muted); text-decoration: none; padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border); line-height: 1; transition: all 0.2s; }
+  .home-btn:hover { color: var(--text); border-color: var(--accent2); box-shadow: 0 0 10px rgba(0,229,255,0.2); }
 
-  .home-btn:hover {
-    color: var(--text);
-    border-color: var(--accent2);
-    box-shadow: 0 0 10px rgba(0,229,255,0.2);
-  }
-
-  /* MAIN GRID */
-  .forge-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 2px;
-    padding: 2px;
-    min-height: calc(100vh - 65px - 220px);
-  }
-
-  /* PANEL BASE */
-  .panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    padding: 18px;
-    position: relative;
+  /* MR TICKER */
+  .mr-banner {
+    display: none;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #000;
+    background: #39ff14;
+    padding: 3px 0;
     overflow: hidden;
-    transition: border-color 0.2s;
+    white-space: nowrap;
   }
+  body.mr-active .mr-banner { display: block; }
+  .mr-banner-inner { display: inline-block; animation: ticker 20s linear infinite; }
+  @keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
 
+  /* GRID */
+  .forge-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; padding: 2px; }
+
+  /* PANELS */
+  .panel { background: var(--panel); border: 1px solid var(--border); padding: 18px; position: relative; overflow: hidden; transition: border-color 0.2s, background 0.4s; }
   .panel:hover { border-color: #3a3a5a; }
-
-  .panel::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-  }
-
+  body.mr-active .panel:hover { border-color: rgba(57,255,20,0.25); }
+  .panel::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; transition: background 0.4s; }
   .panel.p-subject::after { background: var(--accent1); }
   .panel.p-style::after { background: var(--accent2); }
   .panel.p-mood::after { background: var(--accent3); }
@@ -190,24 +195,10 @@
   .panel.p-chaos::after { background: var(--forge); }
   .panel.p-neg::after { background: var(--muted); }
   .panel.p-story::after { background: var(--story); }
+  .panel.p-anim::after { background: var(--anim); }
 
-  .panel-label {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 11px;
-    letter-spacing: 3px;
-    color: var(--muted);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .panel-label .dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
+  .panel-label { font-family: 'Bebas Neue', cursive; font-size: 11px; letter-spacing: 3px; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; transition: color 0.4s; }
+  .panel-label .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; transition: background 0.4s; }
   .p-subject .dot { background: var(--accent1); }
   .p-style .dot { background: var(--accent2); }
   .p-mood .dot { background: var(--accent3); }
@@ -215,494 +206,139 @@
   .p-chaos .dot { background: var(--forge); }
   .p-neg .dot { background: var(--muted); }
   .p-story .dot { background: var(--story); }
+  .p-anim .dot { background: var(--anim); }
 
   /* TAGS */
-  .tag-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 10px;
-  }
-
-  .tag {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 3px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    user-select: none;
-  }
-
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .tag { font-family: 'Share Tech Mono', monospace; font-size: 11px; padding: 4px 10px; border-radius: 3px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; user-select: none; }
   .tag:hover { border-color: currentColor; color: var(--text); }
-
-  .tag.selected { color: var(--bg); border-color: transparent; }
-
+  .tag.selected { color: #000 !important; border-color: transparent; }
   .p-subject .tag.selected { background: var(--accent1); }
-  .p-style .tag.selected { background: var(--accent2); color: var(--bg); }
-  .p-mood .tag.selected { background: var(--accent3); color: var(--bg); }
+  .p-style .tag.selected { background: var(--accent2); }
+  .p-mood .tag.selected { background: var(--accent3); }
   .p-tech .tag.selected { background: var(--accent4); }
-  .p-neg .tag.selected { background: #333; color: var(--accent1); border-color: var(--accent1); }
-  .p-story .tag.selected { background: var(--story); color: var(--bg); }
+  .p-neg .tag.selected { background: #333 !important; color: var(--accent1) !important; border: 1px solid var(--accent1) !important; }
 
-  .prompt-display .highlight-story { color: var(--story); }
+  /* MR injected tags */
+  .tag.mr-tag { border-color: rgba(57,255,20,0.25); color: rgba(57,255,20,0.5); }
+  .tag.mr-tag:hover { color: #39ff14; border-color: #39ff14; }
+  .tag.mr-tag.selected { background: #39ff14 !important; color: #000 !important; border-color: transparent !important; }
 
-  .tag-input {
-    width: 100%;
-    background: var(--panel2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    padding: 7px 10px;
-    border-radius: 3px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
+  .tag-input { width: 100%; background: var(--panel2); border: 1px solid var(--border); color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 12px; padding: 7px 10px; border-radius: 3px; outline: none; transition: border-color 0.2s, background 0.4s; }
   .tag-input:focus { border-color: var(--accent2); }
   .tag-input::placeholder { color: var(--muted); }
 
   /* SLIDERS */
-  .slider-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-
-  .slider-name {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    width: 80px;
-    flex-shrink: 0;
-    letter-spacing: 0.5px;
-  }
-
-  .slider-wrap { flex: 1; position: relative; }
-
-  input[type=range] {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
-  }
-
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: var(--accent4);
-    border: 2px solid var(--bg);
-    cursor: pointer;
-    transition: transform 0.15s;
-  }
-
+  .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .slider-name { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--muted); width: 80px; flex-shrink: 0; letter-spacing: 0.5px; }
+  .slider-wrap { flex: 1; }
+  input[type=range] { -webkit-appearance: none; width: 100%; height: 3px; background: var(--border); border-radius: 2px; outline: none; cursor: pointer; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--accent4); border: 2px solid var(--bg); cursor: pointer; transition: transform 0.15s; }
   input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
+  .slider-val { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--accent4); width: 28px; text-align: right; flex-shrink: 0; }
 
-  .slider-val {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    color: var(--accent4);
-    width: 28px;
-    text-align: right;
-    flex-shrink: 0;
-  }
+  /* CHAOS */
+  .p-chaos { grid-column: span 2; }
+  .chaos-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .chaos-btn { font-family: 'Bebas Neue', cursive; letter-spacing: 2px; font-size: 14px; padding: 10px 14px; border: 1px solid var(--border); background: var(--panel2); color: var(--muted); cursor: pointer; border-radius: 3px; transition: all 0.15s; text-align: center; }
+  .chaos-btn:hover { color: var(--forge); border-color: var(--forge); }
+  .chaos-btn.fire { border-color: var(--forge); color: var(--forge); animation: firepulse 1.5s ease-in-out infinite; }
+  @keyframes firepulse { 0%,100% { box-shadow: 0 0 0 var(--forge); } 50% { box-shadow: 0 0 12px var(--forge); } }
+  .intensity-bar { height: 6px; background: var(--border); border-radius: 3px; margin-top: 12px; overflow: hidden; }
+  .intensity-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent2), var(--accent4), var(--accent1), var(--forge)); transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  .intensity-label { display: flex; justify-content: space-between; margin-top: 4px; font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--muted); }
 
-  /* STORY PANEL */
-  .p-story {
-    grid-column: 1 / -1;
-    display: none;
-  }
+  /* ANIMATION PANEL — all modes */
+  .p-anim { grid-column: 1 / -1; }
+  .anim-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+  @media (max-width: 700px) { .anim-grid { grid-template-columns: repeat(2,1fr); } }
 
+  .anim-section-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--anim); opacity: 0.7; margin-bottom: 6px; text-transform: uppercase; transition: color 0.4s; }
+  body.mr-active .anim-section-label { color: #39ff14; }
+
+  .anim-tag { font-family: 'Share Tech Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 3px; border: 1px solid rgba(255,0,204,0.2); background: transparent; color: rgba(255,0,204,0.5); cursor: pointer; transition: all 0.15s; user-select: none; }
+  .anim-tag:hover { color: var(--anim); border-color: var(--anim); }
+  .anim-tag.selected { background: var(--anim); color: #000; border-color: transparent; font-weight: 700; }
+  body.mr-active .anim-tag { border-color: rgba(57,255,20,0.2); color: rgba(57,255,20,0.5); }
+  body.mr-active .anim-tag:hover { color: #39ff14; border-color: #39ff14; }
+  body.mr-active .anim-tag.selected { background: #39ff14; color: #000; }
+
+  /* STORY (video only) */
+  .p-story { grid-column: 1 / -1; display: none; }
   .p-story.visible { display: block; }
-
-  .story-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-
-  @media (max-width: 700px) {
-    .story-grid { grid-template-columns: repeat(3, 1fr); }
-  }
-  @media (max-width: 480px) {
-    .story-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-
-  .story-section-label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    color: var(--story);
-    opacity: 0.7;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-  }
-
-  .story-tag-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-
-  .story-tag {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    padding: 3px 8px;
-    border-radius: 3px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    user-select: none;
-  }
-
+  .story-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 12px; }
+  @media (max-width: 700px) { .story-grid { grid-template-columns: repeat(3,1fr); } }
+  @media (max-width: 480px) { .story-grid { grid-template-columns: repeat(2,1fr); } }
+  .story-section-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--story); opacity: 0.7; margin-bottom: 6px; text-transform: uppercase; }
+  .story-tag-cloud { display: flex; flex-wrap: wrap; gap: 5px; }
+  .story-tag { font-family: 'Share Tech Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 3px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; user-select: none; }
   .story-tag:hover { color: var(--story); border-color: var(--story); }
-  .story-tag.selected { background: var(--story); color: var(--bg); border-color: transparent; }
-
-  .story-textarea {
-    width: 100%;
-    background: var(--panel2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    padding: 10px 12px;
-    border-radius: 3px;
-    outline: none;
-    resize: vertical;
-    min-height: 64px;
-    line-height: 1.6;
-    transition: border-color 0.2s;
-  }
-
+  .story-tag.selected { background: var(--story); color: #000; border-color: transparent; }
+  .story-textarea { width: 100%; background: var(--panel2); border: 1px solid var(--border); color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 12px; padding: 10px 12px; border-radius: 3px; outline: none; resize: vertical; min-height: 64px; line-height: 1.6; transition: border-color 0.2s; }
   .story-textarea:focus { border-color: var(--story); }
   .story-textarea::placeholder { color: var(--muted); }
+  .story-textarea-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 6px; margin-top: 12px; text-transform: uppercase; }
 
-  .story-textarea-label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    color: var(--muted);
-    margin-bottom: 6px;
-    margin-top: 12px;
-    text-transform: uppercase;
-  }
+  /* OUTPUT */
+  .output-zone { background: var(--panel); border-top: 2px solid var(--border); padding: 18px 20px; position: sticky; bottom: 0; z-index: 50; transition: background 0.4s, border-color 0.4s; }
+  .output-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+  .output-title { font-family: 'Bebas Neue', cursive; letter-spacing: 3px; font-size: 13px; color: var(--muted); }
+  .output-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-  /* CHAOS PANEL */
-  .p-chaos {
-    grid-column: span 2;
-  }
-
-  .chaos-controls {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .chaos-btn {
-    font-family: 'Bebas Neue', cursive;
-    letter-spacing: 2px;
-    font-size: 14px;
-    padding: 10px 14px;
-    border: 1px solid var(--border);
-    background: var(--panel2);
-    color: var(--muted);
-    cursor: pointer;
-    border-radius: 3px;
-    transition: all 0.15s;
-    text-align: center;
-  }
-
-  .chaos-btn:hover {
-    background: var(--panel);
-    color: var(--text);
-    border-color: var(--forge);
-    color: var(--forge);
-  }
-
-  .chaos-btn.fire {
-    border-color: var(--forge);
-    color: var(--forge);
-    animation: firepulse 1.5s ease-in-out infinite;
-  }
-
-  @keyframes firepulse {
-    0%,100% { box-shadow: 0 0 0px var(--forge); }
-    50% { box-shadow: 0 0 12px var(--forge); }
-  }
-
-  /* INTENSITY METER */
-  .intensity-bar {
-    height: 6px;
-    background: var(--border);
-    border-radius: 3px;
-    margin-top: 12px;
-    overflow: hidden;
-  }
-
-  .intensity-fill {
-    height: 100%;
-    border-radius: 3px;
-    background: linear-gradient(90deg, var(--accent2), var(--accent4), var(--accent1), var(--forge));
-    transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1);
-  }
-
-  .intensity-label {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 4px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 9px;
-    color: var(--muted);
-  }
-
-  /* OUTPUT ZONE */
-  .output-zone {
-    background: var(--panel);
-    border-top: 2px solid var(--border);
-    padding: 20px 24px;
-    position: sticky;
-    bottom: 0;
-    z-index: 50;
-  }
-
-  .output-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-
-  .output-title {
-    font-family: 'Bebas Neue', cursive;
-    letter-spacing: 3px;
-    font-size: 13px;
-    color: var(--muted);
-  }
-
-  .output-actions {
-    display: flex;
-    gap: 8px;
-  }
-
-  .action-btn {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 1px;
-    padding: 6px 14px;
-    border-radius: 3px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    text-transform: uppercase;
-  }
-
+  .action-btn { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 1px; padding: 6px 14px; border-radius: 3px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
   .action-btn:hover { color: var(--text); border-color: var(--text); }
+  .action-btn.primary { background: var(--accent1); color: #fff; border-color: var(--accent1); font-weight: 700; }
+  .action-btn.primary:hover { filter: brightness(1.2); box-shadow: 0 0 20px rgba(255,62,108,0.4); }
+  .action-btn.ai-btn { background: linear-gradient(135deg, var(--accent4), var(--accent2)); color: #000; border-color: transparent; font-weight: 700; }
+  .action-btn.ai-btn:hover { filter: brightness(1.1); box-shadow: 0 0 20px rgba(180,77,255,0.4); }
 
-  .action-btn.primary {
-    background: var(--accent1);
-    color: white;
-    border-color: var(--accent1);
-    font-weight: 700;
-  }
+  .prompt-display { background: var(--panel2); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; font-family: 'Share Tech Mono', monospace; font-size: 13px; line-height: 1.7; color: var(--text); min-height: 60px; max-height: 120px; overflow-y: auto; word-break: break-word; transition: border-color 0.3s, background 0.4s; }
+  .prompt-display.loading { border-color: var(--accent4); animation: loadpulse 1s ease-in-out infinite; }
+  @keyframes loadpulse { 0%,100% { border-color: var(--accent4); } 50% { border-color: var(--accent2); } }
 
-  .action-btn.primary:hover {
-    background: #ff1a52;
-    border-color: #ff1a52;
-    box-shadow: 0 0 20px rgba(255,62,108,0.4);
-  }
+  .prompt-display .hl-subject { color: var(--accent1); }
+  .prompt-display .hl-style { color: var(--accent2); }
+  .prompt-display .hl-mood { color: var(--accent3); }
+  .prompt-display .hl-tech { color: var(--accent4); }
+  .prompt-display .hl-chaos { color: var(--forge); }
+  .prompt-display .hl-story { color: var(--story); }
+  .prompt-display .hl-anim { color: var(--anim); }
+  .prompt-display .hl-mr { color: #39ff14; }
+  .prompt-placeholder { color: var(--muted); font-style: italic; font-size: 12px; }
 
-  .action-btn.ai-btn {
-    background: linear-gradient(135deg, var(--accent4), var(--accent2));
-    color: var(--bg);
-    border-color: transparent;
-    font-weight: 700;
-  }
-
-  .action-btn.ai-btn:hover {
-    box-shadow: 0 0 20px rgba(180,77,255,0.4);
-    filter: brightness(1.1);
-  }
-
-  .prompt-display {
-    background: var(--panel2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 14px 16px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--text);
-    min-height: 60px;
-    max-height: 120px;
-    overflow-y: auto;
-    word-break: break-word;
-    position: relative;
-    transition: border-color 0.3s;
-  }
-
-  .prompt-display.loading {
-    border-color: var(--accent4);
-    animation: loadpulse 1s ease-in-out infinite;
-  }
-
-  @keyframes loadpulse {
-    0%,100% { border-color: var(--accent4); }
-    50% { border-color: var(--accent2); }
-  }
-
-  .prompt-display .highlight-subject { color: var(--accent1); }
-  .prompt-display .highlight-style { color: var(--accent2); }
-  .prompt-display .highlight-mood { color: var(--accent3); }
-  .prompt-display .highlight-tech { color: var(--accent4); }
-  .prompt-display .highlight-chaos { color: var(--forge); }
-
-  .prompt-placeholder {
-    color: var(--muted);
-    font-style: italic;
-    font-size: 12px;
-  }
-
-  /* TOKEN COUNT */
-  .token-info {
-    display: flex;
-    gap: 16px;
-    margin-top: 8px;
-  }
-
-  .token-chip {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    display: flex;
-    gap: 5px;
-    align-items: center;
-  }
-
+  .token-info { display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+  .token-chip { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--muted); display: flex; gap: 5px; align-items: center; }
   .token-chip span { color: var(--text); }
 
-  /* SCROLLBAR */
+  .mode-badge { font-family: 'Bebas Neue', cursive; font-size: 10px; letter-spacing: 2px; padding: 2px 8px; border-radius: 2px; margin-left: 8px; }
+  .badge-image { background: var(--accent1); color: #000; }
+  .badge-music { background: var(--accent2); color: #000; }
+  .badge-video { background: var(--accent4); color: #000; }
+  .badge-animation { background: var(--anim); color: #000; }
+
+  .ai-status { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 6px; min-height: 14px; transition: color 0.3s; }
+  .ai-status.active { color: var(--accent4); }
+  .ai-status.done { color: var(--accent2); }
+  .ai-status.error { color: var(--accent1); }
+
   ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: var(--panel); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  /* ANIMATED GRID LINES BG */
-  .grid-lines {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.03;
-    background-image:
-      linear-gradient(var(--accent2) 1px, transparent 1px),
-      linear-gradient(90deg, var(--accent2) 1px, transparent 1px);
-    background-size: 40px 40px;
-    animation: gridmove 20s linear infinite;
-  }
+  .grid-lines { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.03; background-image: linear-gradient(var(--accent2) 1px, transparent 1px), linear-gradient(90deg, var(--accent2) 1px, transparent 1px); background-size: 40px 40px; animation: gridmove 20s linear infinite; transition: opacity 0.4s; }
+  body.mr-active .grid-lines { opacity: 0.07; }
+  @keyframes gridmove { 0% { background-position: 0 0; } 100% { background-position: 40px 40px; } }
 
-  @keyframes gridmove {
-    0% { background-position: 0 0; }
-    100% { background-position: 40px 40px; }
-  }
+  @keyframes sparkle { 0% { opacity:0; transform:scale(0) rotate(0deg); } 50% { opacity:1; transform:scale(1) rotate(180deg); } 100% { opacity:0; transform:scale(0) rotate(360deg); } }
+  .spark { position: fixed; pointer-events: none; font-size: 14px; animation: sparkle 0.6s ease-out forwards; z-index: 9998; }
 
-  /* FLOATING BADGE */
-  .mode-badge {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 10px;
-    letter-spacing: 2px;
-    padding: 2px 8px;
-    border-radius: 2px;
-    margin-left: 8px;
-  }
+  .toast { position: fixed; bottom: 240px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--accent2); color: #000; font-family: 'Share Tech Mono', monospace; font-size: 12px; letter-spacing: 2px; padding: 8px 20px; border-radius: 3px; opacity: 0; transition: all 0.3s; z-index: 9997; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  .badge-image { background: var(--accent1); color: white; }
-  .badge-music { background: var(--accent2); color: var(--bg); }
-  .badge-video { background: var(--accent4); color: white; }
+  .content-wrap { position: relative; z-index: 1; }
 
-  /* SPARKLE */
-  @keyframes sparkle {
-    0% { opacity: 0; transform: scale(0) rotate(0deg); }
-    50% { opacity: 1; transform: scale(1) rotate(180deg); }
-    100% { opacity: 0; transform: scale(0) rotate(360deg); }
-  }
-
-  .spark {
-    position: fixed;
-    pointer-events: none;
-    font-size: 14px;
-    animation: sparkle 0.6s ease-out forwards;
-    z-index: 9998;
-  }
-
-  /* COPY TOAST */
-  .toast {
-    position: fixed;
-    bottom: 240px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--accent2);
-    color: var(--bg);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 2px;
-    padding: 8px 20px;
-    border-radius: 3px;
-    opacity: 0;
-    transition: all 0.3s;
-    z-index: 9997;
-    pointer-events: none;
-  }
-
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  /* AI STATUS */
-  .ai-status {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 6px;
-    min-height: 14px;
-    transition: color 0.3s;
-  }
-
-  .ai-status.active { color: var(--accent4); }
-  .ai-status.done { color: var(--accent2); }
-
-  /* EVERYTHING ABOVE THE FOLD */
-  .content-wrap {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* Responsive */
-  @media (max-width: 700px) {
-    .forge-grid { grid-template-columns: 1fr 1fr; }
-    .p-chaos { grid-column: span 2; }
-    .logo { font-size: 22px; }
-    .mode-tab { font-size: 10px; padding: 5px 8px; }
-  }
-
-  @media (max-width: 480px) {
-    .forge-grid { grid-template-columns: 1fr; }
-    .p-chaos { grid-column: span 1; }
-    .chaos-controls { grid-template-columns: 1fr 1fr; }
-  }
+  @media (max-width: 700px) { .forge-grid { grid-template-columns: 1fr 1fr; } .p-chaos { grid-column: span 2; } .logo { font-size: 20px; } .mode-tab { font-size: 10px; padding: 5px 8px; } }
+  @media (max-width: 480px) { .forge-grid { grid-template-columns: 1fr; } .p-chaos { grid-column: span 1; } .chaos-controls { grid-template-columns: 1fr 1fr; } .mode-tab { font-size: 9px; padding: 5px 5px; } }
 </style>
 </head>
 <body>
@@ -710,40 +346,45 @@
 <div class="toast" id="toast">COPIED</div>
 
 <div class="content-wrap">
+
+  <div class="mr-banner">
+    <span class="mr-banner-inner">★ MAXIMUM REALITY MODE ACTIVATED ★ &nbsp;&nbsp; VHS SCANLINES ENGAGED &nbsp;&nbsp; GLITCH PROTOCOLS RUNNING &nbsp;&nbsp; NEON GRID ONLINE &nbsp;&nbsp; PIXEL SNACKS LOADING &nbsp;&nbsp; HOLOGRAM STABLE &nbsp;&nbsp; ★ MAXIMUM REALITY MODE ACTIVATED ★ &nbsp;&nbsp; VHS SCANLINES ENGAGED &nbsp;&nbsp; GLITCH PROTOCOLS RUNNING &nbsp;&nbsp;</span>
+  </div>
+
   <header class="header">
-    <div class="logo">PROMPT FORGE</div>
+    <div class="header-left">
+      <div class="logo">PROMPT FORGE</div>
+      <button class="mr-toggle-btn" id="mr-toggle-btn" onclick="toggleMRMode()">⬡ MR MODE</button>
+    </div>
     <div class="mode-tabs">
       <button class="mode-tab active" data-mode="image">IMAGE</button>
       <button class="mode-tab" data-mode="music">MUSIC</button>
       <button class="mode-tab" data-mode="video">VIDEO</button>
+      <button class="mode-tab" data-mode="animation">ANIM</button>
     </div>
     <a href="https://maximumreality.xyz" class="home-btn" title="maximumreality.xyz">⌂</a>
   </header>
 
   <div class="forge-grid" id="forge-grid">
 
-    <!-- SUBJECT -->
     <div class="panel p-subject">
       <div class="panel-label"><div class="dot"></div> SUBJECT</div>
       <div class="tag-cloud" id="subject-tags"></div>
       <input class="tag-input" id="subject-input" placeholder="type + enter to add…" />
     </div>
 
-    <!-- STYLE -->
     <div class="panel p-style">
       <div class="panel-label"><div class="dot"></div> STYLE</div>
       <div class="tag-cloud" id="style-tags"></div>
       <input class="tag-input" id="style-input" placeholder="type + enter to add…" />
     </div>
 
-    <!-- MOOD -->
     <div class="panel p-mood">
       <div class="panel-label"><div class="dot"></div> MOOD / ATMOSPHERE</div>
       <div class="tag-cloud" id="mood-tags"></div>
       <input class="tag-input" id="mood-input" placeholder="type + enter to add…" />
     </div>
 
-    <!-- TECHNICAL -->
     <div class="panel p-tech">
       <div class="panel-label"><div class="dot"></div> TECHNICAL</div>
       <div class="tag-cloud" id="tech-tags"></div>
@@ -764,7 +405,6 @@
       </div>
     </div>
 
-    <!-- CHAOS CONTROLS -->
     <div class="panel p-chaos">
       <div class="panel-label"><div class="dot"></div> CHAOS ENGINE</div>
       <div class="chaos-controls">
@@ -773,31 +413,34 @@
         <button class="chaos-btn" onclick="randomizeSection('style')">RANDOM STYLE</button>
         <button class="chaos-btn" onclick="randomizeSection('mood')">RANDOM MOOD</button>
         <button class="chaos-btn" id="chaos-story-btn" style="display:none" onclick="randomizeStory()">RANDOM STORY</button>
+        <button class="chaos-btn" onclick="randomizeAnim()">RANDOM ANIM</button>
       </div>
-      <div class="intensity-bar"><div class="intensity-fill" id="intensity-fill" style="width: 40%"></div></div>
+      <div class="intensity-bar"><div class="intensity-fill" id="intensity-fill" style="width:40%"></div></div>
       <div class="intensity-label"><span>CALM</span><span id="intensity-label-val">INTENSITY: 40%</span><span>CHAOS</span></div>
     </div>
 
-    <!-- NEGATIVE -->
     <div class="panel p-neg">
       <div class="panel-label"><div class="dot"></div> EXCLUDE / NEGATIVE</div>
       <div class="tag-cloud" id="neg-tags"></div>
       <input class="tag-input" id="neg-input" placeholder="things to avoid…" />
     </div>
 
+    <!-- ANIMATION PANEL — all modes -->
+    <div class="panel p-anim">
+      <div class="panel-label"><div class="dot"></div> ANIMATION / MOTION</div>
+      <div class="anim-grid" id="anim-grid"></div>
+    </div>
+
     <!-- STORY (video only) -->
     <div class="panel p-story" id="story-panel">
       <div class="panel-label"><div class="dot"></div> NARRATIVE / STORY</div>
-      <div class="story-grid" id="story-grid">
-        <!-- rendered by JS -->
-      </div>
+      <div class="story-grid" id="story-grid"></div>
       <div class="story-textarea-label">FREE-WRITE YOUR NARRATIVE</div>
-      <textarea class="story-textarea" id="story-freewrite" placeholder="describe the story arc, key moments, emotional journey… anything goes" rows="3"></textarea>
+      <textarea class="story-textarea" id="story-freewrite" placeholder="describe the story arc, key moments, emotional journey…" rows="3"></textarea>
     </div>
 
   </div>
 
-  <!-- OUTPUT -->
   <div class="output-zone">
     <div class="output-header">
       <div>
@@ -823,232 +466,213 @@
 </div>
 
 <script>
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════════════
 // DATA
-// ═══════════════════════════════
-const MODE_DATA = {
+// ═══════════════════════════════════════════════════════
+const BASE_DATA = {
   image: {
-    subject: ['portrait', 'landscape', 'abstract', 'creature', 'architecture', 'still life', 'figure', 'city', 'forest', 'ocean', 'cosmic', 'machinery'],
-    style: ['photorealistic', 'oil painting', 'watercolor', 'concept art', 'anime', 'glitch art', 'vaporwave', 'baroque', 'brutalist', 'ukiyo-e', 'surrealist', 'lo-fi'],
-    mood: ['ethereal', 'ominous', 'joyful', 'melancholic', 'electric', 'serene', 'apocalyptic', 'dreamy', 'visceral', 'transcendent', 'oppressive', 'tender'],
-    tech: ['8K', 'cinematic lighting', 'depth of field', 'HDR', 'volumetric fog', 'ray tracing', 'film grain', 'chromatic aberration', 'anamorphic', 'tilt-shift'],
+    subject: ['portrait','landscape','abstract','creature','architecture','still life','figure','city','forest','ocean','cosmic','machinery'],
+    style: ['photorealistic','oil painting','watercolor','concept art','anime','glitch art','vaporwave','baroque','brutalist','ukiyo-e','surrealist','lo-fi'],
+    mood: ['ethereal','ominous','joyful','melancholic','electric','serene','apocalyptic','dreamy','visceral','transcendent','oppressive','tender'],
+    tech: ['8K','cinematic lighting','depth of field','HDR','volumetric fog','ray tracing','film grain','chromatic aberration','anamorphic','tilt-shift'],
   },
   music: {
-    subject: ['breakbeat', 'ambient drone', 'melodic bass', 'acid house', 'neo-soul', 'trap metal', 'choral', 'orchestral', 'lo-fi beats', 'industrial', 'synth pop', 'jazz fusion'],
-    style: ['layered', 'sparse', 'glitchy', 'hypnotic', 'anthemic', 'intimate', 'chaotic', 'euphoric', 'rhythmic', 'textural', 'cinematic', 'experimental'],
-    mood: ['euphoric', 'haunted', 'nostalgic', 'anxious', 'triumphant', 'meditative', 'frantic', 'bittersweet', 'defiant', 'tender', 'ominous', 'cathartic'],
-    tech: ['808 bass', 'reverb-drenched', 'sidechain pump', 'granular synthesis', 'tape saturation', 'polyrhythmic', 'microtonal', 'spatial audio', 'distorted vocals'],
+    subject: ['breakbeat','ambient drone','melodic bass','acid house','neo-soul','trap metal','choral','orchestral','lo-fi beats','industrial','synth pop','jazz fusion'],
+    style: ['layered','sparse','glitchy','hypnotic','anthemic','intimate','chaotic','euphoric','rhythmic','textural','cinematic','experimental'],
+    mood: ['euphoric','haunted','nostalgic','anxious','triumphant','meditative','frantic','bittersweet','defiant','tender','ominous','cathartic'],
+    tech: ['808 bass','reverb-drenched','sidechain pump','granular synthesis','tape saturation','polyrhythmic','microtonal','spatial audio','distorted vocals'],
   },
   video: {
-    subject: ['timelapse', 'tracking shot', 'portrait film', 'nature doc', 'urban decay', 'underwater', 'slow motion', 'aerial', 'macro', 'crowd', 'solitude', 'transition'],
-    style: ['handheld', 'drone', 'archival', 'noir', 'neon-lit', 'desaturated', 'hyper-saturated', 'double exposure', 'split screen', 'one-shot', 'montage', 'found footage'],
-    mood: ['tense', 'lyrical', 'playful', 'eerie', 'intimate', 'epic', 'melancholic', 'frenetic', 'contemplative', 'dreamlike', 'raw', 'euphoric'],
-    tech: ['4K 120fps', 'anamorphic lens', 'color grade', 'rack focus', 'dutch angle', 'motivated lighting', 'practical FX', 'seamless loop', 'long exposure'],
+    subject: ['timelapse','tracking shot','portrait film','nature doc','urban decay','underwater','slow motion','aerial','macro','crowd','solitude','transition'],
+    style: ['handheld','drone','archival','noir','neon-lit','desaturated','hyper-saturated','double exposure','split screen','one-shot','montage','found footage'],
+    mood: ['tense','lyrical','playful','eerie','intimate','epic','melancholic','frenetic','contemplative','dreamlike','raw','euphoric'],
+    tech: ['4K 120fps','anamorphic lens','color grade','rack focus','dutch angle','motivated lighting','practical FX','seamless loop','long exposure'],
     story: {
-      character: ['lone wanderer', 'unlikely hero', 'fallen idol', 'silent witness', 'shapeshifter', 'the last one', 'twin souls', 'the outsider', 'ghost', 'child'],
-      arc: ['descent', 'rebirth', 'obsession', 'escape', 'pursuit', 'sacrifice', 'awakening', 'loss', 'revenge', 'acceptance', 'collision', 'unraveling'],
-      setting: ['abandoned city', 'deep ocean', 'infinite desert', 'mirror world', 'dying planet', 'neon underground', 'ancient forest', 'void', 'crowded station', 'rooftop'],
-      conflict: ['inner demons', 'time running out', 'betrayal', 'unstoppable force', 'forbidden desire', 'memory loss', 'identity fracture', 'the unknown', 'silence', 'fire'],
-      ending: ['ambiguous', 'tragic', 'transcendent', 'cyclical', 'violent', 'quiet', 'hopeful', 'dissolves', 'cut to black', 'never ends'],
+      character: ['lone wanderer','unlikely hero','fallen idol','silent witness','shapeshifter','the last one','twin souls','the outsider','ghost','child'],
+      arc: ['descent','rebirth','obsession','escape','pursuit','sacrifice','awakening','loss','revenge','acceptance','collision','unraveling'],
+      setting: ['abandoned city','deep ocean','infinite desert','mirror world','dying planet','neon underground','ancient forest','void','crowded station','rooftop'],
+      conflict: ['inner demons','time running out','betrayal','unstoppable force','forbidden desire','memory loss','identity fracture','the unknown','silence','fire'],
+      ending: ['ambiguous','tragic','transcendent','cyclical','violent','quiet','hopeful','dissolves','cut to black','never ends'],
     }
+  },
+  animation: {
+    subject: ['character rig','particle system','fluid sim','morphing shape','kinetic type','abstract loop','mechanical creature','crowd sim','data viz','logo reveal','environment fly-through','cel figure'],
+    style: ['motion graphics','hand-drawn','3D render','stop motion','cel shaded','pixel art','paper cut','glitch anime','low-poly','vector','claymation','wireframe'],
+    mood: ['hypnotic','frenetic','serene loop','unsettling','playful','cosmic','gritty','euphoric','melancholic','tense','absurd','meditative'],
+    tech: ['60fps loop','seamless tile','easing curves','follow-through','squash & stretch','anticipation','smear frames','hold frames','stepped curves','noise offset'],
   }
 };
 
-const QUALITY_WORDS = ['rough sketch', 'basic', 'good', 'detailed', 'high quality', 'ultra-detailed', 'masterwork', 'breathtaking', 'transcendent', 'godlike', 'divine perfection'];
-const DETAIL_WORDS = ['minimal', 'simple', 'moderate', 'detailed', 'intricate', 'hyper-detailed', 'insanely detailed', 'microscopic detail', 'every pixel perfect', 'infinite detail'];
-const WEIRD_WORDS = ['straightforward', 'conventional', 'slightly unusual', 'surreal elements', 'dreamlike', 'bizarre', 'deeply strange', 'unhinged', 'fever dream', 'incomprehensible chaos', 'reality-breaking'];
+// MR tags injected into each panel when MR mode is on
+const MR_INJECT = {
+  subject: ['neon grid city','VHS broadcast host','glitch duplicate','hologram figure','pixelated crowd','digital void','1980s TV studio','corrupted avatar'],
+  style: ['Max Headroom aesthetic','VHS scanlines','CRT phosphor glow','80s broadcast TV','glitch art corruption','synthwave neon','pixel retro','digital noise'],
+  mood: ['absurdly chaotic','retro-digital fever','comedic panic','neon delirium','VHS static dread','hypnotic broadcast','over-caffeinated','manic television energy'],
+  tech: ['RGB channel split','scan interference','chromatic fringe','VHS tape warble','CRT curvature','signal dropout','freeze frame smear','digital artifact burst','pixel dissolve'],
+};
 
-// ═══════════════════════════════
+// Animation sub-panel (all modes)
+const ANIM_DATA = {
+  timing: ['snappy','slow drag','bouncy','elastic','mechanical','organic','staccato','fluid','delayed burst','instant pop'],
+  loop: ['perfect loop','ping-pong','one-shot','interrupted','reversed','layered offset','stagger','random offset'],
+  camera: ['locked off','slow push','orbit','whip pan','shake','zoom burst','parallax','isometric','worm eye','birds eye'],
+  motion_fx: ['chromatic split','RGB smear','color cycle','monochrome pulse','neon trail','afterimage','motion blur','strobe','speed lines','pixel scatter'],
+};
+const ANIM_LABELS = { timing:'TIMING', loop:'LOOP TYPE', camera:'CAMERA', motion_fx:'MOTION FX' };
+
+const QUALITY_WORDS = ['rough sketch','basic','good','detailed','high quality','ultra-detailed','masterwork','breathtaking','transcendent','godlike','divine perfection'];
+const DETAIL_WORDS = ['minimal','simple','moderate','detailed','intricate','hyper-detailed','insanely detailed','microscopic detail','every pixel perfect','infinite detail'];
+const WEIRD_WORDS = ['straightforward','conventional','slightly unusual','surreal elements','dreamlike','bizarre','deeply strange','unhinged','fever dream','incomprehensible chaos','reality-breaking'];
+
+// ═══════════════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════════════
 let currentMode = 'image';
-let selectedTags = { subject: [], style: [], mood: [], tech: [], neg: [] };
-let customTags = { subject: [], style: [], mood: [], tech: [], neg: [] };
-let sliders = { quality: 8, detail: 7, weird: 4 };
-let selectedStory = { character: [], arc: [], setting: [], conflict: [], ending: [] };
+let mrActive = false;
+let selectedTags = { subject:[], style:[], mood:[], tech:[], neg:[] };
+let customTags = { subject:[], style:[], mood:[], tech:[], neg:[] };
+let sliders = { quality:8, detail:7, weird:4 };
+let selectedStory = { character:[], arc:[], setting:[], conflict:[], ending:[] };
+let selectedAnim = { timing:[], loop:[], camera:[], motion_fx:[] };
 
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════════════
 // INIT
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════════════
 function init() {
   renderAllTags();
+  renderAnimPanel();
   setupSliders();
   setupInputs();
   setupModes();
-  setupStoryTextarea();
+  document.getElementById('story-freewrite').addEventListener('input', updatePrompt);
   updatePrompt();
 }
 
+// ═══════════════════════════════════════════════════════
+// MR MODE
+// ═══════════════════════════════════════════════════════
+function toggleMRMode() {
+  mrActive = !mrActive;
+  document.body.classList.toggle('mr-active', mrActive);
+  const btn = document.getElementById('mr-toggle-btn');
+  btn.classList.toggle('active', mrActive);
+  btn.textContent = mrActive ? '⬡ MR: ON' : '⬡ MR MODE';
+  if (mrActive) {
+    for (let i = 0; i < 14; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'spark';
+        el.textContent = ['⬡','⚡','★','✦','▓','░','▒','◈'][Math.floor(Math.random()*8)];
+        el.style.left = Math.random() * window.innerWidth + 'px';
+        el.style.top = Math.random() * (window.innerHeight * 0.5) + 'px';
+        el.style.color = ['#39ff14','#ff00ff','#00ffff','#ffe600'][Math.floor(Math.random()*4)];
+        el.style.fontSize = (12 + Math.random() * 14) + 'px';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 650);
+      }, i * 45);
+    }
+  }
+  renderAllTags();
+  renderAnimPanel();
+  updateIntensity();
+  updatePrompt();
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════
+function q(s) { return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
 function renderAllTags() {
-  const data = MODE_DATA[currentMode];
-  ['subject', 'style', 'mood', 'tech'].forEach(cat => {
-    const container = document.getElementById(`${cat}-tags`);
-    const allTags = [...(data[cat] || []), ...(customTags[cat] || [])];
-    container.innerHTML = allTags.map(tag => `
-      <div class="tag ${selectedTags[cat].includes(tag) ? 'selected' : ''}"
-           onclick="toggleTag('${cat}', '${tag}', this)">${tag}</div>
-    `).join('');
+  const data = BASE_DATA[currentMode];
+  ['subject','style','mood','tech'].forEach(cat => {
+    const container = document.getElementById(cat + '-tags');
+    const base = [...(data[cat] || []), ...(customTags[cat] || [])];
+    const mrExtras = mrActive ? (MR_INJECT[cat] || []) : [];
+    let html = base.map(tag => `<div class="tag ${selectedTags[cat].includes(tag) ? 'selected' : ''}" onclick="toggleTag('${cat}','${q(tag)}',this)">${tag}</div>`).join('');
+    html += mrExtras.map(tag => `<div class="tag mr-tag ${selectedTags[cat].includes(tag) ? 'selected' : ''}" onclick="toggleTag('${cat}','${q(tag)}',this)">${tag}</div>`).join('');
+    container.innerHTML = html;
   });
-
-  // neg tags
-  const negContainer = document.getElementById('neg-tags');
-  negContainer.innerHTML = [...(customTags.neg || [])].map(tag => `
-    <div class="tag ${selectedTags.neg.includes(tag) ? 'selected' : ''}"
-         onclick="toggleTag('neg', '${tag}', this)">${tag}</div>
-  `).join('');
-
+  const negC = document.getElementById('neg-tags');
+  negC.innerHTML = (customTags.neg || []).map(tag => `<div class="tag ${selectedTags.neg.includes(tag) ? 'selected' : ''}" onclick="toggleTag('neg','${q(tag)}',this)">${tag}</div>`).join('');
   renderStoryPanel();
 }
 
 function renderStoryPanel() {
   const panel = document.getElementById('story-panel');
-  const grid = document.getElementById('story-grid');
-
-  if (currentMode !== 'video') {
-    panel.classList.remove('visible');
-    return;
-  }
-
+  if (currentMode !== 'video') { panel.classList.remove('visible'); return; }
   panel.classList.add('visible');
-  const storyData = MODE_DATA.video.story;
-  const labels = { character: 'CHARACTER', arc: 'ARC / JOURNEY', setting: 'SETTING / WORLD', conflict: 'CONFLICT', ending: 'ENDING' };
-
-  grid.innerHTML = Object.entries(storyData).map(([key, tags]) => `
+  const storyData = BASE_DATA.video.story;
+  const labels = { character:'CHARACTER', arc:'ARC / JOURNEY', setting:'SETTING / WORLD', conflict:'CONFLICT', ending:'ENDING' };
+  document.getElementById('story-grid').innerHTML = Object.entries(storyData).map(([key, tags]) => `
     <div>
       <div class="story-section-label">${labels[key]}</div>
-      <div class="story-tag-cloud" id="story-${key}-tags">
-        ${tags.map(tag => `
-          <div class="story-tag ${selectedStory[key].includes(tag) ? 'selected' : ''}"
-               onclick="toggleStoryTag('${key}', '${tag}', this)">${tag}</div>
-        `).join('')}
-      </div>
-    </div>
-  `).join('');
+      <div class="story-tag-cloud">${tags.map(tag => `<div class="story-tag ${selectedStory[key].includes(tag) ? 'selected' : ''}" onclick="toggleStoryTag('${key}','${q(tag)}',this)">${tag}</div>`).join('')}</div>
+    </div>`).join('');
 }
 
-function setupStoryTextarea() {
-  const ta = document.getElementById('story-freewrite');
-  ta.addEventListener('input', () => updatePrompt());
+function renderAnimPanel() {
+  document.getElementById('anim-grid').innerHTML = Object.entries(ANIM_DATA).map(([key, tags]) => `
+    <div>
+      <div class="anim-section-label">${ANIM_LABELS[key]}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;">${tags.map(tag => `<div class="anim-tag ${selectedAnim[key].includes(tag) ? 'selected' : ''}" onclick="toggleAnim('${key}','${q(tag)}',this)">${tag}</div>`).join('')}</div>
+    </div>`).join('');
 }
 
-
-function setupSliders() {
-  ['quality', 'detail', 'weird'].forEach(name => {
-    const sl = document.getElementById(`sl-${name}`);
-    const sv = document.getElementById(`sv-${name}`);
-    sl.addEventListener('input', () => {
-      sliders[name] = parseInt(sl.value);
-      sv.textContent = sl.value;
-      updateIntensity();
-      updatePrompt();
-    });
-  });
-}
-
-function setupInputs() {
-  ['subject', 'style', 'mood', 'tech', 'neg'].forEach(cat => {
-    const input = document.getElementById(`${cat}-input`);
-    if (!input) return;
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && input.value.trim()) {
-        const val = input.value.trim().toLowerCase();
-        if (!customTags[cat]) customTags[cat] = [];
-        if (!customTags[cat].includes(val)) {
-          customTags[cat].push(val);
-          selectedTags[cat].push(val);
-        }
-        input.value = '';
-        renderAllTags();
-        updatePrompt();
-        sparkle(e.clientX || 200, e.clientY || 200);
-      }
-    });
-  });
-}
-
-function setupModes() {
-  document.querySelectorAll('.mode-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentMode = btn.dataset.mode;
-      selectedTags = { subject: [], style: [], mood: [], tech: [], neg: [] };
-      selectedStory = { character: [], arc: [], setting: [], conflict: [], ending: [] };
-      document.getElementById('story-freewrite').value = '';
-      const storyBtn = document.getElementById('chaos-story-btn');
-      storyBtn.style.display = currentMode === 'video' ? 'block' : 'none';
-      renderAllTags();
-      updatePrompt();
-      const badge = document.getElementById('mode-badge');
-      badge.textContent = currentMode.toUpperCase();
-      badge.className = `mode-badge badge-${currentMode}`;
-      document.getElementById('mode-display').textContent = currentMode.toUpperCase();
-    });
-  });
-}
-
-// ═══════════════════════════════
-// TAG TOGGLE
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════════════
+// TOGGLES
+// ═══════════════════════════════════════════════════════
 function toggleTag(cat, tag, el) {
   const idx = selectedTags[cat].indexOf(tag);
-  if (idx > -1) {
-    selectedTags[cat].splice(idx, 1);
-    el.classList.remove('selected');
-  } else {
-    selectedTags[cat].push(tag);
-    el.classList.add('selected');
-    sparkle(el.getBoundingClientRect().left + 20, el.getBoundingClientRect().top + 10);
-  }
-  updatePrompt();
-  updateIntensity();
+  if (idx > -1) { selectedTags[cat].splice(idx,1); el.classList.remove('selected'); }
+  else { selectedTags[cat].push(tag); el.classList.add('selected'); sparkle(el.getBoundingClientRect().left+20, el.getBoundingClientRect().top+10); }
+  updatePrompt(); updateIntensity();
 }
-
 function toggleStoryTag(cat, tag, el) {
   const idx = selectedStory[cat].indexOf(tag);
-  if (idx > -1) {
-    selectedStory[cat].splice(idx, 1);
-    el.classList.remove('selected');
-  } else {
-    selectedStory[cat].push(tag);
-    el.classList.add('selected');
-    sparkle(el.getBoundingClientRect().left + 20, el.getBoundingClientRect().top + 10);
-  }
-  updatePrompt();
-  updateIntensity();
+  if (idx > -1) { selectedStory[cat].splice(idx,1); el.classList.remove('selected'); }
+  else { selectedStory[cat].push(tag); el.classList.add('selected'); sparkle(el.getBoundingClientRect().left+20, el.getBoundingClientRect().top+10); }
+  updatePrompt(); updateIntensity();
+}
+function toggleAnim(cat, tag, el) {
+  const idx = selectedAnim[cat].indexOf(tag);
+  if (idx > -1) { selectedAnim[cat].splice(idx,1); el.classList.remove('selected'); }
+  else { selectedAnim[cat].push(tag); el.classList.add('selected'); sparkle(el.getBoundingClientRect().left+20, el.getBoundingClientRect().top+10); }
+  updatePrompt(); updateIntensity();
 }
 
-
+// ═══════════════════════════════════════════════════════
+// PROMPT
+// ═══════════════════════════════════════════════════════
 function buildPrompt() {
   const parts = [];
-
-  if (selectedTags.subject.length) parts.push(`<span class="highlight-subject">${selectedTags.subject.join(', ')}</span>`);
-  if (selectedTags.style.length) parts.push(`<span class="highlight-style">${selectedTags.style.join(', ')}</span>`);
-  if (selectedTags.mood.length) parts.push(`<span class="highlight-mood">${selectedTags.mood.join(', ')}</span>`);
-
-  const qualWord = QUALITY_WORDS[Math.min(sliders.quality, QUALITY_WORDS.length - 1)];
-  const detWord = DETAIL_WORDS[Math.min(sliders.detail, DETAIL_WORDS.length - 1)];
-  const weirdWord = WEIRD_WORDS[Math.min(sliders.weird, WEIRD_WORDS.length - 1)];
-
-  if (sliders.quality > 2) parts.push(`<span class="highlight-tech">${qualWord}</span>`);
-  if (sliders.detail > 2) parts.push(`<span class="highlight-tech">${detWord}</span>`);
-  if (sliders.weird > 1) parts.push(`<span class="highlight-chaos">${weirdWord}</span>`);
-
-  if (selectedTags.tech.length) parts.push(`<span class="highlight-tech">${selectedTags.tech.join(', ')}</span>`);
-
-  // STORY (video only)
-  const storyParts = [];
-  if (selectedStory.character.length) storyParts.push(`protagonist: ${selectedStory.character.join(' / ')}`);
-  if (selectedStory.setting.length) storyParts.push(`world: ${selectedStory.setting.join(', ')}`);
-  if (selectedStory.arc.length) storyParts.push(`arc: ${selectedStory.arc.join(' → ')}`);
-  if (selectedStory.conflict.length) storyParts.push(`conflict: ${selectedStory.conflict.join(', ')}`);
-  if (selectedStory.ending.length) storyParts.push(`ending: ${selectedStory.ending.join(' / ')}`);
-  const freewrite = document.getElementById('story-freewrite')?.value?.trim();
-  if (freewrite) storyParts.push(freewrite);
-  if (storyParts.length) parts.push(`<span class="highlight-story">[ STORY — ${storyParts.join(' | ')} ]</span>`);
-
+  if (selectedTags.subject.length) parts.push(`<span class="hl-subject">${selectedTags.subject.join(', ')}</span>`);
+  if (selectedTags.style.length) parts.push(`<span class="hl-style">${selectedTags.style.join(', ')}</span>`);
+  if (selectedTags.mood.length) parts.push(`<span class="hl-mood">${selectedTags.mood.join(', ')}</span>`);
+  const qw = QUALITY_WORDS[Math.min(sliders.quality, QUALITY_WORDS.length-1)];
+  const dw = DETAIL_WORDS[Math.min(sliders.detail, DETAIL_WORDS.length-1)];
+  const ww = WEIRD_WORDS[Math.min(sliders.weird, WEIRD_WORDS.length-1)];
+  if (sliders.quality > 2) parts.push(`<span class="hl-tech">${qw}</span>`);
+  if (sliders.detail > 2) parts.push(`<span class="hl-tech">${dw}</span>`);
+  if (sliders.weird > 1) parts.push(`<span class="hl-chaos">${ww}</span>`);
+  if (selectedTags.tech.length) parts.push(`<span class="hl-tech">${selectedTags.tech.join(', ')}</span>`);
+  const sp = [];
+  if (selectedStory.character.length) sp.push('protagonist: '+selectedStory.character.join(' / '));
+  if (selectedStory.setting.length) sp.push('world: '+selectedStory.setting.join(', '));
+  if (selectedStory.arc.length) sp.push('arc: '+selectedStory.arc.join(' → '));
+  if (selectedStory.conflict.length) sp.push('conflict: '+selectedStory.conflict.join(', '));
+  if (selectedStory.ending.length) sp.push('ending: '+selectedStory.ending.join(' / '));
+  const fw = document.getElementById('story-freewrite')?.value?.trim();
+  if (fw) sp.push(fw);
+  if (sp.length) parts.push(`<span class="hl-story">[ STORY — ${sp.join(' | ')} ]</span>`);
+  const ap = [];
+  if (selectedAnim.timing.length) ap.push('timing: '+selectedAnim.timing.join(', '));
+  if (selectedAnim.loop.length) ap.push('loop: '+selectedAnim.loop.join(', '));
+  if (selectedAnim.camera.length) ap.push('cam: '+selectedAnim.camera.join(', '));
+  if (selectedAnim.motion_fx.length) ap.push('fx: '+selectedAnim.motion_fx.join(', '));
+  if (ap.length) parts.push(`<span class="hl-anim">[ ANIM — ${ap.join(' | ')} ]</span>`);
+  if (mrActive) parts.push(`<span class="hl-mr">[ MAXIMUM REALITY — 1980s Max Headroom broadcast, VHS glitch TV aesthetic, neon grids, CRT scanlines, synthwave ]</span>`);
   if (selectedTags.neg.length) parts.push(`<span style="color:var(--muted)">–– NO: ${selectedTags.neg.join(', ')}</span>`);
-
   return parts.join(', ');
 }
 
@@ -1057,227 +681,222 @@ function buildPlainPrompt() {
   if (selectedTags.subject.length) parts.push(selectedTags.subject.join(', '));
   if (selectedTags.style.length) parts.push(selectedTags.style.join(', '));
   if (selectedTags.mood.length) parts.push(selectedTags.mood.join(', '));
-
-  const qualWord = QUALITY_WORDS[Math.min(sliders.quality, QUALITY_WORDS.length - 1)];
-  const detWord = DETAIL_WORDS[Math.min(sliders.detail, DETAIL_WORDS.length - 1)];
-  const weirdWord = WEIRD_WORDS[Math.min(sliders.weird, WEIRD_WORDS.length - 1)];
-
-  if (sliders.quality > 2) parts.push(qualWord);
-  if (sliders.detail > 2) parts.push(detWord);
-  if (sliders.weird > 1) parts.push(weirdWord);
+  const qw = QUALITY_WORDS[Math.min(sliders.quality, QUALITY_WORDS.length-1)];
+  const dw = DETAIL_WORDS[Math.min(sliders.detail, DETAIL_WORDS.length-1)];
+  const ww = WEIRD_WORDS[Math.min(sliders.weird, WEIRD_WORDS.length-1)];
+  if (sliders.quality > 2) parts.push(qw);
+  if (sliders.detail > 2) parts.push(dw);
+  if (sliders.weird > 1) parts.push(ww);
   if (selectedTags.tech.length) parts.push(selectedTags.tech.join(', '));
-
-  const storyParts = [];
-  if (selectedStory.character.length) storyParts.push(`protagonist: ${selectedStory.character.join(' / ')}`);
-  if (selectedStory.setting.length) storyParts.push(`world: ${selectedStory.setting.join(', ')}`);
-  if (selectedStory.arc.length) storyParts.push(`arc: ${selectedStory.arc.join(' → ')}`);
-  if (selectedStory.conflict.length) storyParts.push(`conflict: ${selectedStory.conflict.join(', ')}`);
-  if (selectedStory.ending.length) storyParts.push(`ending: ${selectedStory.ending.join(' / ')}`);
-  const freewrite = document.getElementById('story-freewrite')?.value?.trim();
-  if (freewrite) storyParts.push(freewrite);
-  if (storyParts.length) parts.push(`[ STORY — ${storyParts.join(' | ')} ]`);
-
+  const sp = [];
+  if (selectedStory.character.length) sp.push('protagonist: '+selectedStory.character.join(' / '));
+  if (selectedStory.setting.length) sp.push('world: '+selectedStory.setting.join(', '));
+  if (selectedStory.arc.length) sp.push('arc: '+selectedStory.arc.join(' → '));
+  if (selectedStory.conflict.length) sp.push('conflict: '+selectedStory.conflict.join(', '));
+  if (selectedStory.ending.length) sp.push('ending: '+selectedStory.ending.join(' / '));
+  const fw = document.getElementById('story-freewrite')?.value?.trim();
+  if (fw) sp.push(fw);
+  if (sp.length) parts.push('[ STORY — '+sp.join(' | ')+' ]');
+  const ap = [];
+  if (selectedAnim.timing.length) ap.push('timing: '+selectedAnim.timing.join(', '));
+  if (selectedAnim.loop.length) ap.push('loop: '+selectedAnim.loop.join(', '));
+  if (selectedAnim.camera.length) ap.push('cam: '+selectedAnim.camera.join(', '));
+  if (selectedAnim.motion_fx.length) ap.push('fx: '+selectedAnim.motion_fx.join(', '));
+  if (ap.length) parts.push('[ ANIM — '+ap.join(' | ')+' ]');
+  if (mrActive) parts.push('[ MAXIMUM REALITY — 1980s Max Headroom broadcast aesthetic, VHS glitch TV, neon grids, CRT scanlines, glitch overlays, split screen, holographic props, synthwave, vocoder, absurd digital chaos, comedic timing ]');
   let prompt = parts.join(', ');
-  if (selectedTags.neg.length) prompt += ` --no ${selectedTags.neg.join(', ')}`;
+  if (selectedTags.neg.length) prompt += ' --no '+selectedTags.neg.join(', ');
   return prompt;
 }
 
 function updatePrompt() {
   const display = document.getElementById('prompt-display');
-  const html = buildPrompt();
-  const allSelected = [...Object.values(selectedTags).flat(), ...Object.values(selectedStory).flat()];
-
-  if (!html || allSelected.length === 0) {
+  const allSelected = [...Object.values(selectedTags).flat(),...Object.values(selectedStory).flat(),...Object.values(selectedAnim).flat()];
+  const hasContent = allSelected.length > 0 || mrActive;
+  if (!hasContent) {
     display.innerHTML = '<span class="prompt-placeholder">select tags above — your prompt assembles here in real time…</span>';
     document.getElementById('word-count').textContent = '0';
     document.getElementById('tag-count').textContent = '0';
   } else {
-    display.innerHTML = html;
+    display.innerHTML = buildPrompt();
     const plain = buildPlainPrompt();
     document.getElementById('word-count').textContent = plain.split(/\s+/).filter(Boolean).length;
     document.getElementById('tag-count').textContent = allSelected.length;
   }
 }
 
-// ═══════════════════════════════
-// INTENSITY
-// ═══════════════════════════════
 function updateIntensity() {
-  const tagCount = [...Object.values(selectedTags).flat(), ...Object.values(selectedStory).flat()].length;
-  const sliderAvg = (sliders.quality + sliders.detail + sliders.weird) / 3;
-  const raw = Math.min(100, Math.round((tagCount * 5) + (sliderAvg * 4)));
-  document.getElementById('intensity-fill').style.width = raw + '%';
-  document.getElementById('intensity-label-val').textContent = `INTENSITY: ${raw}%`;
+  const tagCount = [...Object.values(selectedTags).flat(),...Object.values(selectedStory).flat(),...Object.values(selectedAnim).flat()].length;
+  const sliderAvg = (sliders.quality+sliders.detail+sliders.weird)/3;
+  const mrBoost = mrActive ? 18 : 0;
+  const raw = Math.min(100, Math.round((tagCount*5)+(sliderAvg*4)+mrBoost));
+  document.getElementById('intensity-fill').style.width = raw+'%';
+  document.getElementById('intensity-label-val').textContent = 'INTENSITY: '+raw+'%';
 }
 
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════════════
+// SETUP
+// ═══════════════════════════════════════════════════════
+function setupSliders() {
+  ['quality','detail','weird'].forEach(name => {
+    const sl = document.getElementById('sl-'+name);
+    const sv = document.getElementById('sv-'+name);
+    sl.addEventListener('input', () => { sliders[name]=parseInt(sl.value); sv.textContent=sl.value; updateIntensity(); updatePrompt(); });
+  });
+}
+function setupInputs() {
+  ['subject','style','mood','tech','neg'].forEach(cat => {
+    const input = document.getElementById(cat+'-input');
+    if (!input) return;
+    input.addEventListener('keydown', e => {
+      if (e.key==='Enter' && input.value.trim()) {
+        const val = input.value.trim().toLowerCase();
+        if (!customTags[cat].includes(val)) { customTags[cat].push(val); selectedTags[cat].push(val); }
+        input.value=''; renderAllTags(); updatePrompt();
+        sparkle(e.clientX||200, e.clientY||200);
+      }
+    });
+  });
+}
+function setupModes() {
+  document.querySelectorAll('.mode-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.dataset.mode;
+      selectedTags = { subject:[],style:[],mood:[],tech:[],neg:[] };
+      selectedStory = { character:[],arc:[],setting:[],conflict:[],ending:[] };
+      document.getElementById('story-freewrite').value = '';
+      document.getElementById('chaos-story-btn').style.display = currentMode==='video' ? 'block' : 'none';
+      renderAllTags(); renderAnimPanel(); updatePrompt();
+      const badge = document.getElementById('mode-badge');
+      badge.textContent = currentMode.toUpperCase();
+      badge.className = 'mode-badge badge-'+currentMode;
+      document.getElementById('mode-display').textContent = currentMode.toUpperCase();
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════
 // CHAOS
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════════════
+function fy(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
 function randomizeAll() {
-  const data = MODE_DATA[currentMode];
-  selectedTags = { subject: [], style: [], mood: [], tech: [], neg: [] };
-
-  ['subject', 'style', 'mood', 'tech'].forEach(cat => {
-    const pool = [...(data[cat] || []), ...(customTags[cat] || [])];
-    const count = 2 + Math.floor(Math.random() * 3);
-    const shuffled = pool.sort(() => 0.5 - Math.random()).slice(0, count);
-    selectedTags[cat] = shuffled;
+  const data = BASE_DATA[currentMode];
+  selectedTags = { subject:[],style:[],mood:[],tech:[],neg:[] };
+  ['subject','style','mood','tech'].forEach(cat => {
+    const mrE = mrActive ? (MR_INJECT[cat]||[]) : [];
+    selectedTags[cat] = fy([...(data[cat]||[]),...(customTags[cat]||[]),...mrE]).slice(0, 2+Math.floor(Math.random()*3));
   });
-
-  sliders.quality = 5 + Math.floor(Math.random() * 6);
-  sliders.detail = 4 + Math.floor(Math.random() * 7);
-  sliders.weird = Math.floor(Math.random() * 11);
-
-  document.getElementById('sl-quality').value = sliders.quality;
-  document.getElementById('sl-detail').value = sliders.detail;
-  document.getElementById('sl-weird').value = sliders.weird;
-  document.getElementById('sv-quality').textContent = sliders.quality;
-  document.getElementById('sv-detail').textContent = sliders.detail;
-  document.getElementById('sv-weird').textContent = sliders.weird;
-
-  renderAllTags();
-  if (currentMode === 'video') randomizeStory();
-  updatePrompt();
-  updateIntensity();
-
-  // shower of sparks
-  for (let i = 0; i < 8; i++) {
-    setTimeout(() => sparkle(Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.6), i * 60);
-  }
+  sliders.quality = 5+Math.floor(Math.random()*6);
+  sliders.detail = 4+Math.floor(Math.random()*7);
+  sliders.weird = mrActive ? 6+Math.floor(Math.random()*5) : Math.floor(Math.random()*11);
+  ['quality','detail','weird'].forEach(n => { document.getElementById('sl-'+n).value=sliders[n]; document.getElementById('sv-'+n).textContent=sliders[n]; });
+  if (currentMode==='video') randomizeStory();
+  randomizeAnim();
+  renderAllTags(); updatePrompt(); updateIntensity();
+  for(let i=0;i<8;i++) setTimeout(()=>sparkle(Math.random()*window.innerWidth, Math.random()*window.innerHeight*0.6),i*60);
 }
-
 function randomizeSection(cat) {
-  const data = MODE_DATA[currentMode];
-  const pool = [...(data[cat] || []), ...(customTags[cat] || [])];
-  const count = 2 + Math.floor(Math.random() * 3);
-  selectedTags[cat] = pool.sort(() => 0.5 - Math.random()).slice(0, count);
-  renderAllTags();
-  updatePrompt();
-  updateIntensity();
+  const data = BASE_DATA[currentMode];
+  const mrE = mrActive ? (MR_INJECT[cat]||[]) : [];
+  selectedTags[cat] = fy([...(data[cat]||[]),...(customTags[cat]||[]),...mrE]).slice(0,2+Math.floor(Math.random()*3));
+  renderAllTags(); updatePrompt(); updateIntensity();
 }
-
 function randomizeStory() {
-  const storyData = MODE_DATA.video.story;
-  Object.keys(selectedStory).forEach(key => {
-    const pool = storyData[key];
-    selectedStory[key] = pool.sort(() => 0.5 - Math.random()).slice(0, 1 + Math.floor(Math.random() * 2));
-  });
-  renderStoryPanel();
-  updatePrompt();
-  updateIntensity();
-  for (let i = 0; i < 5; i++) {
-    setTimeout(() => sparkle(Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.7), i * 70);
-  }
+  Object.keys(selectedStory).forEach(key => { selectedStory[key] = fy([...BASE_DATA.video.story[key]]).slice(0,1+Math.floor(Math.random()*2)); });
+  renderStoryPanel(); updatePrompt(); updateIntensity();
+  for(let i=0;i<5;i++) setTimeout(()=>sparkle(Math.random()*window.innerWidth,Math.random()*window.innerHeight*0.7),i*70);
+}
+function randomizeAnim() {
+  Object.keys(selectedAnim).forEach(key => { selectedAnim[key] = fy([...ANIM_DATA[key]]).slice(0,1+Math.floor(Math.random()*2)); });
+  renderAnimPanel(); updatePrompt(); updateIntensity();
 }
 
-
+// ═══════════════════════════════════════════════════════
+// AI POLISH — Puter, robust response extraction
+// ═══════════════════════════════════════════════════════
 async function aiPolish() {
   const plain = buildPlainPrompt();
-  if (!plain || plain.trim().length === 0) {
-    document.getElementById('ai-status').textContent = '⚠ add some tags first';
-    return;
-  }
-
+  if (!plain.trim()) { document.getElementById('ai-status').textContent='⚠ add some tags first'; return; }
   const display = document.getElementById('prompt-display');
   const status = document.getElementById('ai-status');
-
   display.classList.add('loading');
-  status.className = 'ai-status active';
-  status.textContent = '✦ AI polishing your prompt…';
-
+  status.className='ai-status active';
+  status.textContent='✦ forging with AI…';
+  const modeGuide = { image:'Midjourney or Stable Diffusion image generation', music:'AI music generation like Suno or Udio', video:'AI video generation like Runway or Sora', animation:'AI animation generation like Kling or Pika' };
+  const systemPrompt = `You are a master prompt engineer for ${modeGuide[currentMode]}. Take the raw prompt ingredients and forge them into a single powerful evocative prompt. Keep it under 80 words. Make it vivid and specific.${mrActive?' The MAXIMUM REALITY flag means: honor a 1980s Max Headroom / VHS glitch broadcast TV aesthetic — neon grids, scanlines, glitch FX, absurd digital chaos, synthwave energy, comedic absurdity.':''} Return ONLY the polished prompt — no preamble, no quotes, no explanation.`;
   try {
-    const modeGuide = {
-      image: 'Midjourney or Stable Diffusion image generation',
-      music: 'AI music generation (like Suno or Udio)',
-      video: 'AI video generation (like Runway or Sora)'
-    };
-
-    const systemPrompt = `You are a master prompt engineer for ${modeGuide[currentMode]}. Take these raw prompt ingredients and forge them into a single, powerful, evocative prompt. Keep it under 80 words. Make it vivid and specific. Preserve the intent and aesthetic direction. Return ONLY the polished prompt, nothing else.`;
-
-    const response = await puter.ai.chat(`${systemPrompt}\n\nRaw ingredients: ${plain}`);
-    const polished = typeof response === 'string' ? response.trim() : response?.message?.content?.[0]?.text?.trim() ?? response?.text?.trim();
-
-    if (polished) {
-      display.classList.remove('loading');
-      display.innerHTML = polished;
-      status.className = 'ai-status done';
-      status.textContent = '✦ AI polish complete';
-      document.getElementById('word-count').textContent = polished.split(/\s+/).filter(Boolean).length;
-      setTimeout(() => { status.textContent = ''; status.className = 'ai-status'; }, 3000);
-      sparkle(window.innerWidth / 2, window.innerHeight / 2);
-    }
-  } catch (err) {
+    const response = await puter.ai.chat([
+      { role:'system', content:systemPrompt },
+      { role:'user', content:'Raw ingredients: '+plain }
+    ]);
+    // Exhaustive extraction
+    let polished = null;
+    if (typeof response==='string') polished=response.trim();
+    else if (response?.text) polished=response.text.trim();
+    else if (typeof response?.message?.content==='string') polished=response.message.content.trim();
+    else if (Array.isArray(response?.message?.content)) polished=response.message.content.map(b=>b.text||'').join('').trim();
+    else if (response?.choices?.[0]?.message?.content) polished=response.choices[0].message.content.trim();
+    else if (response?.content) { const c=response.content; polished=(typeof c==='string'?c:Array.isArray(c)?c.map(b=>b.text||'').join(''):JSON.stringify(c)).trim(); }
     display.classList.remove('loading');
-    status.className = 'ai-status';
-    status.textContent = '⚠ polish failed — check connection';
+    if (polished && polished.length>0) {
+      display.innerHTML=polished;
+      status.className='ai-status done'; status.textContent='✦ polish complete';
+      document.getElementById('word-count').textContent=polished.split(/\s+/).filter(Boolean).length;
+      setTimeout(()=>{status.textContent='';status.className='ai-status';},3000);
+      sparkle(window.innerWidth/2, window.innerHeight/2);
+    } else { throw new Error('empty response'); }
+  } catch(err) {
+    document.getElementById('prompt-display').classList.remove('loading');
+    status.className='ai-status error'; status.textContent='⚠ polish failed — check connection';
+    setTimeout(()=>{status.textContent='';status.className='ai-status';},4000);
+    console.error('Puter AI error:', err);
   }
 }
 
-// ═══════════════════════════════
-// COPY
-// ═══════════════════════════════
+// ═══════════════════════════════════════════════════════
+// COPY / CLEAR
+// ═══════════════════════════════════════════════════════
 function copyPrompt() {
-  const display = document.getElementById('prompt-display');
-  const text = display.innerText || display.textContent;
-  if (!text || text.includes('select tags')) return;
-
-  navigator.clipboard.writeText(text).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-  });
-
-  const toast = document.getElementById('toast');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 1500);
-
-  for (let i = 0; i < 5; i++) {
-    setTimeout(() => sparkle(Math.random() * window.innerWidth, window.innerHeight - 250), i * 80);
-  }
+  const display=document.getElementById('prompt-display');
+  const text=display.innerText||display.textContent;
+  if (!text||text.includes('select tags')) return;
+  navigator.clipboard.writeText(text).catch(()=>{const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);});
+  const toast=document.getElementById('toast'); toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),1500);
+  for(let i=0;i<5;i++) setTimeout(()=>sparkle(Math.random()*window.innerWidth,window.innerHeight-250),i*80);
 }
-
-// ═══════════════════════════════
-// CLEAR
-// ═══════════════════════════════
 function clearAll() {
-  selectedTags = { subject: [], style: [], mood: [], tech: [], neg: [] };
-  customTags = { subject: [], style: [], mood: [], tech: [], neg: [] };
-  selectedStory = { character: [], arc: [], setting: [], conflict: [], ending: [] };
-  const ta = document.getElementById('story-freewrite');
-  if (ta) ta.value = '';
-  sliders = { quality: 8, detail: 7, weird: 4 };
-  ['quality', 'detail', 'weird'].forEach(n => {
-    document.getElementById(`sl-${n}`).value = sliders[n];
-    document.getElementById(`sv-${n}`).textContent = sliders[n];
-  });
-  renderAllTags();
-  updatePrompt();
-  updateIntensity();
-  document.getElementById('ai-status').textContent = '';
+  selectedTags={subject:[],style:[],mood:[],tech:[],neg:[]};
+  customTags={subject:[],style:[],mood:[],tech:[],neg:[]};
+  selectedStory={character:[],arc:[],setting:[],conflict:[],ending:[]};
+  selectedAnim={timing:[],loop:[],camera:[],motion_fx:[]};
+  document.getElementById('story-freewrite').value='';
+  sliders={quality:8,detail:7,weird:4};
+  ['quality','detail','weird'].forEach(n=>{document.getElementById('sl-'+n).value=sliders[n];document.getElementById('sv-'+n).textContent=sliders[n];});
+  renderAllTags(); renderAnimPanel(); updatePrompt(); updateIntensity();
+  document.getElementById('ai-status').textContent='';
   document.getElementById('prompt-display').classList.remove('loading');
 }
 
-// ═══════════════════════════════
-// SPARKLE FX
-// ═══════════════════════════════
-const SPARKS = ['✦', '⚡', '✸', '◆', '★', '⬡', '✺', '⊕'];
-function sparkle(x, y) {
-  const el = document.createElement('div');
-  el.className = 'spark';
-  el.textContent = SPARKS[Math.floor(Math.random() * SPARKS.length)];
-  el.style.left = (x + (Math.random() - 0.5) * 30) + 'px';
-  el.style.top = (y + (Math.random() - 0.5) * 30) + 'px';
-  el.style.color = ['var(--accent1)', 'var(--accent2)', 'var(--accent3)', 'var(--accent4)', 'var(--forge)'][Math.floor(Math.random() * 5)];
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 650);
+// ═══════════════════════════════════════════════════════
+// SPARKLE
+// ═══════════════════════════════════════════════════════
+const SPARKS=['✦','⚡','✸','◆','★','⬡','✺','⊕'];
+function sparkle(x,y) {
+  const el=document.createElement('div'); el.className='spark';
+  el.textContent=SPARKS[Math.floor(Math.random()*SPARKS.length)];
+  el.style.left=(x+(Math.random()-0.5)*30)+'px';
+  el.style.top=(y+(Math.random()-0.5)*30)+'px';
+  const colors=mrActive?['#39ff14','#ff00ff','#00ffff','#ffe600','#ff6a00']:['var(--accent1)','var(--accent2)','var(--accent3)','var(--accent4)','var(--forge)'];
+  el.style.color=colors[Math.floor(Math.random()*colors.length)];
+  document.body.appendChild(el); setTimeout(()=>el.remove(),650);
 }
 
 init();
 </script>
-  <script>
+<script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/prompt/sw.js")
     .then(() => console.log("Prompt Forge SW registered"))

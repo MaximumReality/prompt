@@ -8,35 +8,104 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
-  <style>
-    :root {
-      --bg-deep: #0a0e1f; --bg-dream: #0f143a;
-      --cyan: #7df9ff; --violet: #b993ff; --magenta: #ff77c8;
-      --text: #e0e7ff; --text-muted: #a5b4fc;
-    }
-    body { background: radial-gradient(circle at 18% 12%, #1a1f4a 0%, #0f143a 35%, #0a0e1f 60%, #02030a 100%);
-           color: var(--text); font-family: 'Inter', system-ui, sans-serif; margin:0; min-height:100vh; }
-    body.mr { background:#000204; color:#ccffcc; }
+ <style>
+:root{
+--cyan:#7df9ff;
+--violet:#b993ff;
+--magenta:#ff77c8;
+--bg1:#1a1f4a;
+--bg2:#0f143a;
+--bg3:#0a0e1f;
+--bg4:#02030a;
+--text:#e0e7ff;
+}
 
-    h1 { font-family: 'Orbitron', sans-serif; font-weight:700; 
-         background: linear-gradient(90deg, var(--cyan), var(--violet), var(--magenta));
-         -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow:0 0 24px var(--cyan); }
+body{
+background:radial-gradient(circle at 18% 12%, var(--bg1) 0%, var(--bg2) 35%, var(--bg3) 60%, var(--bg4) 100%);
+color:var(--text);
+font-family:'Inter',sans-serif;
+margin:0;
+min-height:100vh;
+}
 
-    .glass { background: rgba(15,20,58,0.48); border-radius:1.5rem; padding:1.5rem; backdrop-filter:blur(10px); }
-    body.mr .glass { background: rgba(8,18,8,0.55); }
+body.mr{
+background:#000204;
+color:#ccffcc;
+}
 
-    button { font-family: 'Inter', sans-serif; cursor:pointer; }
+h1{
+font-family:'Orbitron',sans-serif;
+background:linear-gradient(90deg,var(--cyan),var(--violet),var(--magenta));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+text-shadow:0 0 24px var(--cyan);
+}
 
-    iframe { width:100%; height:500px; border:none; border-radius:1rem; }
-  </style>
+.glass{
+background:rgba(15,20,58,0.48);
+border-radius:1.5rem;
+padding:1.5rem;
+backdrop-filter:blur(10px);
+}
+
+body.mr .glass{
+background:rgba(8,18,8,0.55);
+}
+
+textarea{
+background:#05070f;
+border-radius:1rem;
+padding:12px;
+border:1px solid #222;
+width:100%;
+}
+
+.tag{
+padding:6px 12px;
+border-radius:999px;
+background:#111;
+cursor:pointer;
+font-size:12px;
+}
+
+.tag.active{
+background:linear-gradient(90deg,var(--cyan),var(--violet));
+color:black;
+}
+
+button{
+cursor:pointer;
+}
+
+#warpOverlay{
+position:fixed;
+inset:0;
+background:radial-gradient(circle at center,#1a1f4a 0%,#0a0e1f 60%,black 100%);
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+font-family:Orbitron,sans-serif;
+color:#7df9ff;
+font-size:22px;
+letter-spacing:2px;
+opacity:0;
+pointer-events:none;
+transition:opacity .6s ease;
+z-index:9999;
+}
+</style>
+
 </head>
 <body class="p-6">
 
   <header class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl">Neural Prompt Forge</h1>
-    <button onclick="document.body.classList.toggle('mr')"
-            class="px-4 py-2 rounded-full border border-current font-mono text-sm">MR MODE</button>
-  </header>
+<h1 class="text-3xl">Neural Prompt Forge</h1>
+<button onclick="document.body.classList.toggle('mr')" class="px-4 py-2 rounded-full border border-current font-mono text-sm">
+MR MODE
+</button>
+</header>
+
 
   <div class="grid md:grid-cols-2 gap-6">
     <!-- Left: Prompt builder -->
@@ -48,44 +117,79 @@
       <textarea id="neg" rows="2" placeholder="blurry, lowres, deformed..."></textarea>
 
       <div class="flex flex-wrap gap-2">
-        <span class="tag" data-tag="dreamcore">dreamcore</span>
-        <span class="tag" data-tag="cyberdream">cyberdream</span>
-        <span class="tag" data-tag="synthwave">synthwave</span>
-      </div>
+<span class="tag" data-tag="dreamcore">dreamcore</span>
+<span class="tag" data-tag="cyberdream">cyberdream</span>
+<span class="tag" data-tag="synthwave">synthwave</span>
+<span class="tag" data-tag="neon void">neon void</span>
+<span class="tag" data-tag="surreal">surreal</span>
+</div>
 
-      <button onclick="applyPromptToIframe()" class="py-3 rounded-xl bg-violet-700/50 hover:bg-violet-800 font-medium">Apply Prompt →</button>
-    </div>
 
-    <!-- Right: Perchance iframe -->
-    <div class="glass flex flex-col space-y-3">
-      <h2 class="text-xl font-semibold">Perchance Generator</h2>
-      <iframe id="perchanceFrame" src="https://perchance.org/ai-text-to-image-generator"></iframe>
-    </div>
+      <button onclick="dreamWarpLaunch()" class="py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 font-semibold">
+ENTER RENDER DREAM
+</button>
+</div>
+
+
+    <div class="glass flex items-center justify-center text-center">
+<div>
+<h2 class="text-xl font-semibold mb-2">External Neural Renderer</h2>
+<p class="opacity-70 text-sm">
+Dream Warp will transport you into the rendering dimension.
+</p>
+</div>
+</div>
+
   </div>
+<div id="warpOverlay">
+<div id="warpText">Stabilizing Dream Signal…</div>
+</div>
 
 <script>
-  // Tag click
-  document.querySelectorAll('.tag').forEach(el=>{
-    el.addEventListener('click',()=>{
-      el.classList.toggle('active');
-      const tag = el.dataset.tag;
-      const posTA = document.getElementById('pos');
-      if(el.classList.contains('active')) {
-        if(!posTA.value.includes(tag)) posTA.value = posTA.value.trim() ? posTA.value.trim() + ", "+tag : tag;
-      } else {
-        posTA.value = posTA.value.replace(new RegExp(`,? ?${tag}`, 'gi'),'').trim();
-      }
-    });
-  });
+document.querySelectorAll('.tag').forEach(el=>{
+el.addEventListener('click',()=>{
+el.classList.toggle('active');
+const tag=el.dataset.tag;
+const ta=document.getElementById('pos');
+if(el.classList.contains('active')){
+if(!ta.value.includes(tag)) ta.value=ta.value.trim()?ta.value.trim()+", "+tag:tag;
+}else{
+ta.value=ta.value.replace(new RegExp(`,? ?${tag}`,'gi'),'').trim();
+}
+});
+});
 
-  // Send prompt to iframe (if Perchance supports query params)
-  function applyPromptToIframe(){
-    const prompt = encodeURIComponent(document.getElementById('pos').value);
-    const iframe = document.getElementById('perchanceFrame');
-    // Example: Perchance may allow ?prompt=TEXT
-    iframe.src = `https://perchance.org/ai-text-to-image-generator?prompt=${prompt}`;
-  }
+function dreamWarpLaunch(){
+const overlay=document.getElementById("warpOverlay");
+const text=document.getElementById("warpText");
+const prompt=encodeURIComponent(document.getElementById("pos").value||"");
+
+overlay.style.opacity=1;
+overlay.style.pointerEvents="all";
+
+const phases=[
+"Stabilizing Dream Signal…",
+"Calibrating Neural Field…",
+"Opening Creative Rift…",
+"Warping into Render Space…"
+];
+
+let i=0;
+
+const interval=setInterval(()=>{
+i++;
+if(i<phases.length){
+text.innerText=phases[i];
+}else{
+clearInterval(interval);
+window.open("https://perchance.org/ai-text-to-image-generator?prompt="+prompt,"_blank");
+overlay.style.opacity=0;
+overlay.style.pointerEvents="none";
+}
+},900);
+}
 </script>
+
 
 </body>
 </html>

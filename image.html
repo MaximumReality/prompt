@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMAGE_FORGE | Maximum Reality</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        :root { --neon-blue: #00e5ff; --neon-pink: #ff00ff; }
+        body { background: #000; color: #fff; font-family: 'Courier New', monospace; padding: 20px; text-align: center; }
+        .container { max-width: 600px; margin: auto; border: 1px solid var(--neon-blue); padding: 20px; box-shadow: 0 0 15px var(--neon-blue); }
+        input { width: 80%; padding: 10px; background: #111; border: 1px solid var(--neon-pink); color: #fff; margin-bottom: 20px; }
+        button { padding: 10px 20px; background: var(--neon-blue); border: none; font-weight: bold; cursor: pointer; }
+        #output-container { margin-top: 20px; min-height: 300px; border: 1px dashed #444; display: flex; align-items: center; justify-content: center; }
+        img { max-width: 100%; border: 2px solid #fff; }
+        .loading { color: var(--neon-pink); animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>[ NEURAL_IMAGE_FORGE ]</h2>
+    <input type="text" id="promptInput" placeholder="Describe your vision...">
+    <button onclick="generateImage()">EXECUTE_GEN</button>
+
+    <div id="output-container">
+        <p id="statusText">Awaiting Signal...</p>
+    </div>
+</div>
+
+<script>
+    async function generateImage() {
+        const prompt = document.getElementById('promptInput').value;
+        const output = document.getElementById('output-container');
+        const status = document.getElementById('statusText');
+
+        if (!prompt) return alert("Enter a prompt, Creator.");
+
+        // UI Feedback
+        status.innerHTML = "<span class='loading'>GENERATING_PIXELS...</span>";
+        
+        try {
+            // Using Puter's free text-to-image API
+            // You can specify models like 'flux-1-schnell' or 'stabilityai/stable-diffusion-xl-base-1.0'
+            const imgElement = await puter.ai.txt2img(prompt);
+            
+            output.innerHTML = ""; // Clear status
+            output.appendChild(imgElement);
+        } catch (error) {
+            status.innerText = "ERROR: LINK_SEVERED";
+            console.error(error);
+        }
+    }
+</script>
+
+</body>
+</html>

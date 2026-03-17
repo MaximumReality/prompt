@@ -3,189 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neural Prompt Forge • Dream-to-Pixel</title>
+    <title>Neural Prompt Forge • Dream Edition</title>
     <script src="https://js.puter.com/v2/"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@500;700&family=Black+Ops+One&family=Share+Tech+Mono&family=Bebas+Neue&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Dream palette (default) */
             --bg-deep: #0a0e1f; --bg-dream: #0f143a;
             --dream-cyan: #7df9ff; --dream-violet: #b993ff; --dream-magenta: #ff77c8;
             --text-soft: #e0e7ff; --text-muted: #a5b4fc;
             --border-dream: rgba(125,249,255,0.18);
-            --glow-cyan: rgba(125,249,255,0.35);
-            /* MR / Glitch palette (activated by toggle) */
-            --bg: #0a0a0c; --panel: #111116; --border: #2a2a3a;
-            --accent1: #ff3e6c; --accent2: #00e5ff; --accent3: #ffe600; --accent4: #b44dff;
+            --glow-cyan: rgba(125,249,255,0.35); --glow-violet: rgba(185,147,255,0.25);
+            --mr-green: #39ff14; --mr-pink: #ff00ff; --mr-cyan: #00ffff;
         }
         body {
             background: radial-gradient(circle at 20% 15%, #1a1f4a 0%, #0f143a 30%, #0a0e1f 55%, #02030a 100%);
             color: var(--text-soft);
             font-family: 'Inter', system-ui, sans-serif;
             min-height: 100vh;
-            transition: all 0.6s ease;
+            margin: 0;
+            transition: background 0.8s, color 0.8s;
         }
         body.mr-active {
-            --bg: #050a02; --panel: #0a120a; --border: #1a3a14;
-            --accent1: #ff00ff; --accent2: #39ff14; --accent3: #ffe600; --accent4: #00ffff;
             background: #050a02;
             color: #ccffcc;
         }
-        /* Dream glass cards */
-        .glass-card {
-            background: rgba(15, 20, 58, 0.45);
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, var(--dream-cyan), var(--dream-violet), var(--dream-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px var(--glow-cyan);
+        }
+        body.mr-active h1 {
+            background: linear-gradient(90deg, var(--mr-pink), var(--mr-green), var(--mr-cyan));
+        }
+        .glass {
+            background: rgba(15,20,58,0.45);
             border: 1px solid var(--border-dream);
             backdrop-filter: blur(12px);
             box-shadow: 0 8px 32px var(--glow-cyan), inset 0 0 20px var(--glow-violet);
-            border-radius: 1.75rem;
+            border-radius: 1.5rem;
         }
-        body.mr-active .glass-card {
-            background: rgba(10,18,10,0.6);
-            border-color: rgba(57,255,20,0.3);
-            box-shadow: 0 0 20px #39ff14;
+        body.mr-active .glass {
+            background: rgba(10,18,10,0.65);
+            border-color: rgba(57,255,20,0.35);
+            box-shadow: 0 0 25px #39ff14;
         }
-        h1 { font-family: 'Orbitron', 'Inter', sans-serif; background: linear-gradient(90deg, var(--dream-cyan), var(--dream-violet), var(--dream-magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px var(--glow-cyan); }
-        body.mr-active h1 { background: linear-gradient(90deg, #ff00ff, #39ff14, #00ffff); }
-
+        textarea, input, select {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #4a5568;
+            color: white;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+        }
+        textarea:focus, input:focus, select:focus {
+            border-color: var(--dream-cyan);
+            box-shadow: 0 0 0 3px rgba(125,249,255,0.3);
+            outline: none;
+        }
+        body.mr-active textarea:focus, body.mr-active input:focus, body.mr-active select:focus {
+            border-color: #39ff14;
+            box-shadow: 0 0 0 3px rgba(57,255,20,0.4);
+        }
         #generateBtn {
             background: linear-gradient(135deg, var(--dream-cyan), var(--dream-violet), var(--dream-magenta));
-            color: #000c1a;
+            color: #000814;
+            font-weight: 600;
             box-shadow: 0 0 30px var(--glow-cyan);
+            transition: all 0.3s;
         }
-        body.mr-active #generateBtn { background: linear-gradient(135deg, #39ff14, #00ffff); color: #000; box-shadow: 0 0 30px #39ff14; }
-
-        .thumb:hover, .tag:hover { animation: dreamPulse 3s ease-in-out infinite; }
-        @keyframes dreamPulse { 0%,100% { box-shadow: 0 0 0px var(--glow-cyan); } 50% { box-shadow: 0 0 35px var(--glow-cyan), 0 0 20px var(--glow-violet); } }
-
-        /* Prompt Forge original styles (merged + adapted) */
-        .forge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 12px; }
-        .panel { background: rgba(15,20,58,0.6); border: 1px solid var(--border-dream); padding: 18px; border-radius: 12px; }
-        body.mr-active .panel { background: var(--panel); border-color: var(--border); }
-        /* (all other Prompt Forge panel, tag, slider, etc. styles are kept exactly as you wrote them — I copied them in full below for brevity in this block but they are 100% present in the real file) */
-        /* ... [full Prompt Forge CSS from your second document is included verbatim in the actual file] ... */
-
-        .mr-banner { display: none; }
-        body.mr-active .mr-banner { display: block; }
-        .grid-lines { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.03; background-image: linear-gradient(var(--accent2) 1px, transparent 1px), linear-gradient(90deg, var(--accent2) 1px, transparent 1px); background-size: 40px 40px; animation: gridmove 20s linear infinite; }
-        body.mr-active .grid-lines { opacity: 0.08; }
+        #generateBtn:hover:not(:disabled) {
+            box-shadow: 0 0 50px var(--dream-magenta);
+            transform: translateY(-2px);
+        }
+        .tag {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #4a5568;
+            padding: 0.4rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tag.selected {
+            background: var(--dream-violet);
+            color: black;
+            border-color: transparent;
+        }
+        body.mr-active .tag.selected {
+            background: #39ff14;
+            color: black;
+        }
+        .spinner {
+            border: 4px solid rgba(125,249,255,0.3);
+            border-top: 4px solid var(--dream-cyan);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen">
-<div class="max-w-7xl mx-auto p-6 relative z-10">
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-8">
-        <h1 class="text-4xl font-bold tracking-tighter">Neural Prompt Forge</h1>
-        <div class="flex gap-3">
-            <button onclick="toggleMRMode()" id="mr-toggle" class="px-6 py-2 rounded-2xl border border-zinc-700 hover:border-cyan-400 transition-all text-sm font-mono">⬡ MR MODE</button>
-            <button onclick="toggleDreamMode()" class="px-6 py-2 rounded-2xl border border-zinc-700 hover:border-violet-400 transition-all text-sm font-mono">🌌 DREAM MODE</button>
+<body>
+<div class="p-4 max-w-5xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6 text-center">Neural Prompt Forge</h1>
+
+    <!-- Prompt Builder Section -->
+    <div class="glass p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold">Prompt Builder</h2>
+            <button onclick="toggleMR()" class="px-4 py-2 bg-black/40 border border-green-500/50 rounded-lg text-green-400 text-sm font-mono hover:bg-green-900/30">
+                MR MODE
+            </button>
+        </div>
+
+        <textarea id="prompt" rows="4" class="w-full mb-4" placeholder="Describe your dream image..."></textarea>
+        <textarea id="negative" rows="2" class="w-full mb-4" placeholder="Things to avoid (blurry, deformed...)"></textarea>
+
+        <!-- Simple tag examples - you can expand this later -->
+        <div class="flex flex-wrap gap-2 mb-4">
+            <span class="tag" onclick="this.classList.toggle('selected')">cyberpunk</span>
+            <span class="tag" onclick="this.classList.toggle('selected')">ethereal</span>
+            <span class="tag" onclick="this.classList.toggle('selected')">neon</span>
+            <span class="tag" onclick="this.classList.toggle('selected')">surreal</span>
+            <span class="tag" onclick="this.classList.toggle('selected')">vaporwave</span>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+            <button onclick="mutatePrompt()" class="flex-1 bg-violet-900/60 hover:bg-violet-800 py-3 rounded-xl">🌀 Mutate Prompt</button>
+            <button onclick="addNeuralNoise()" class="flex-1 bg-cyan-900/60 hover:bg-cyan-800 py-3 rounded-xl">⚡ Neural Noise</button>
+            <button onclick="generateImages()" id="generateBtn" class="flex-1 py-3 rounded-xl font-bold">Generate Images</button>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <!-- LEFT: Prompt Forge Builder -->
-        <div class="lg:col-span-7 glass-card p-8 overflow-auto max-h-[calc(100vh-140px)]">
-            <!-- All your Prompt Forge panels (forge-grid) go here — copied verbatim -->
-            <div class="forge-grid" id="forge-grid"> ... [full Prompt Forge panels HTML from your document] ... </div>
-            
-            <!-- Output zone with new buttons -->
-            <div class="output-zone mt-8 bg-zinc-950/40 border border-zinc-700/50 rounded-3xl p-6">
-                <div class="prompt-display" id="prompt-display"></div>
-                <div class="flex flex-wrap gap-3 mt-6">
-                    <button onclick="aiPolish()" class="action-btn ai-btn">✦ AI POLISH</button>
-                    <button onclick="mutatePrompt()" class="action-btn">🌀 MUTATE PROMPT</button>
-                    <button onclick="neuralNoise()" class="action-btn">⚡ NEURAL NOISE</button>
-                    <button onclick="batchVariations()" class="action-btn">BATCH VARIATIONS (4)</button>
-                    <button onclick="rewindTimeline()" class="action-btn">⤺ REWIND</button>
-                    <button onclick="compareModels()" class="action-btn">COMPARE MODELS</button>
-                    <button onclick="copyPrompt()" class="action-btn primary">COPY PROMPT</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- RIGHT: Dreamy Image Studio -->
-        <div class="lg:col-span-5 glass-card p-8 flex flex-col">
-            <!-- Model, quality, dimensions, num images (kept from your last version) -->
-            <div class="grid grid-cols-2 gap-6 mb-8">
-                <!-- model select, quality, dimensions, numImages, testMode — exactly as in your last file -->
-            </div>
-            <button id="generateBtn" onclick="generateBatch()" class="w-full py-6 rounded-3xl text-xl font-semibold">GENERATE IMAGES</button>
-
-            <!-- Preview area (exactly as in your last dreamy version) -->
-            <div id="viewfinder" class="flex-1 ..."> ... [your full resultsGrid + placeholder + loadingOverlay + history] ... </div>
-        </div>
+    <!-- Results -->
+    <div class="glass p-6">
+        <div id="status" class="text-center mb-4 text-sm text-cyan-300"></div>
+        <div id="resultsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
     </div>
 </div>
 
-<!-- Grid lines & MR banner (Prompt Forge) -->
-<div class="grid-lines"></div>
-<div class="mr-banner"><span class="mr-banner-inner">★ MAXIMUM REALITY MODE ★ NEURAL FORGE ONLINE ★</span></div>
-
 <script>
-// FULL PROMPT FORGE JS (your second document) + FULL NEURAL FORGE JS (your last version) merged
-// + NEW FEATURE FUNCTIONS below
+// State
+let mrMode = false;
 
-// ... [all functions from Prompt Forge: init(), renderAllTags(), buildPlainPrompt(), toggleMRMode(), etc.] ...
+// Toggle MR aesthetic
+function toggleMR() {
+    mrMode = !mrMode;
+    document.body.classList.toggle('mr-active', mrMode);
+}
 
-// NEW FEATURE FUNCTIONS
+// Basic prompt enhancement
 async function mutatePrompt() {
-    const plain = buildPlainPrompt();
-    const res = await puter.ai.chat([{role:"system", content:"You are a chaotic prompt mutator. Remix this prompt into something wilder and more vivid."}, {role:"user", content:plain}]);
-    // update display and trigger updatePrompt()
+    const promptEl = document.getElementById('prompt');
+    const text = promptEl.value.trim();
+    if (!text) return alert("Enter a prompt first");
+
+    try {
+        const res = await puter.ai.chat([
+            {role:"system", content:"You are a dreamy artistic prompt engineer. Make this more vivid, cinematic, detailed and surreal."},
+            {role:"user", content:text}
+        ]);
+        promptEl.value = (res?.text || res?.content || text + " ... remixed").trim();
+    } catch(e) {
+        alert("AI failed — check sign-in or connection");
+    }
 }
 
-function neuralNoise() {
-    randomizeAll();
-    // add extra neural terms
-    selectedTags.tech.push("neural noise", "quantum artifact", "latent space bleed");
-    renderAllTags(); updatePrompt();
+// Add random neural/glitch flavor
+function addNeuralNoise() {
+    const p = document.getElementById('prompt');
+    const noises = [
+        ", latent space artifacts, neural dream bleed",
+        ", quantum fluctuations, holographic distortion",
+        ", glitch overlay, VHS tracking lines",
+        ", ethereal plasma glow, chromatic aberration"
+    ];
+    p.value = (p.value.trim() + noises[Math.floor(Math.random()*noises.length)]).trim();
 }
 
-async function batchVariations() {
-    document.getElementById('numImages').value = "4";
-    // subtle mutations already handled by the generator loop
-    generateBatch();
-}
+// Main generation
+async function generateImages() {
+    const btn = document.getElementById('generateBtn');
+    const status = document.getElementById('status');
+    const grid = document.getElementById('resultsGrid');
 
-let promptHistory = [];
-function saveToTimeline() {
-    promptHistory.unshift({prompt: buildPlainPrompt(), neg: selectedTags.neg.join(', ')});
-    if (promptHistory.length > 10) promptHistory.pop();
-}
-function rewindTimeline() {
-    if (promptHistory.length < 2) return;
-    const previous = promptHistory[1];
-    // restore tags & prompt (simple version)
-    updatePrompt();
-}
+    const prompt = document.getElementById('prompt').value.trim();
+    if (!prompt) return status.textContent = "Please write a prompt";
 
-async function compareModels() {
-    const originalModel = document.getElementById('model').value;
-    // generate once with current, once with FLUX
-    document.getElementById('model').value = "black-forest-labs/FLUX.1-schnell";
-    await generateSingleImage(); // side-by-side logic in resultsGrid
-    document.getElementById('model').value = originalModel;
-}
+    const negative = document.getElementById('negative').value.trim();
+    const num = 3; // fixed for simplicity - can make selectable later
 
-// Generate now pulls from Prompt Forge
-async function generateBatch() {
-    const prompt = buildPlainPrompt() || "A beautiful dreamscape";
-    const negative = selectedTags.neg.join(', ') || "";
-    // then your original Neural Forge generation logic continues with these values
-    // ... (rest of your generateBatch code)
-}
+    btn.disabled = true;
+    status.textContent = "Generating... (10–60 sec)";
 
-// Dream / MR toggle
-function toggleDreamMode() {
-    document.body.classList.remove('mr-active');
-}
-function toggleMRMode() { /* your original toggleMRMode + extra sparks */ }
+    grid.innerHTML = '';
+    for (let i = 0; i < num; i++) {
+        const div = document.createElement('div');
+        div.className = "relative bg-black/40 rounded-xl overflow-hidden aspect-square border border-zinc-800 flex items-center justify-center";
+        div.innerHTML = '<div class="spinner"></div><p class="absolute text-xs text-zinc-500">Image '+(i+1)+'</p>';
+        grid.appendChild(div);
 
-// INIT
-init(); // from Prompt Forge
-// your original model population + event listeners
+        try {
+            const opts = { model: "black-forest-labs/FLUX.1-schnell" };
+            if (negative) opts.negative_prompt = negative;
+
+            const blob = await puter.ai.txt2img(prompt, opts);
+            const url = URL.createObjectURL(blob);
+
+            const img = document.createElement('img');
+            img.src = url;
+            img.className = "w-full h-full object-cover";
+            div.innerHTML = '';
+            div.appendChild(img);
+
+            // mini download button
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dream-${Date.now()}.png`;
+            a.className = "absolute bottom-2 right-2 bg-white/80 text-black px-3 py-1 rounded text-xs";
+            a.textContent = "↓";
+            div.appendChild(a);
+        } catch (e) {
+            div.innerHTML = `<p class="text-red-400 text-xs p-4">Error</p>`;
+        }
+    }
+
+    btn.disabled = false;
+    status.textContent = "Generation complete";
+}
 </script>
 </body>
 </html>

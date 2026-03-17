@@ -251,7 +251,10 @@
           🌀 Mutate
         </button>
       </div>
-
+<div class="flex items-center gap-3 mt-3">
+  <input type="checkbox" id="testMode" class="w-5 h-5 accent-cyan-400">
+  <label for="testMode" class="text-sm opacity-80">Test Mode (free preview, lower quality)</label>
+</div>
       <button onclick="generateImages()" id="genBtn"
               class="w-full py-5 rounded-2xl text-lg font-semibold btn-generate disabled:opacity-50 disabled:cursor-not-allowed">
         Generate Images
@@ -399,23 +402,28 @@ async function generateImages() {
     return;
   }
 
+  const useTestMode = document.getElementById('testMode').checked;
+
   genBtn.disabled = true;
-  status.textContent = "Generating... (10–60 s)";
+  status.textContent = useTestMode ? "Generating quick preview..." : "Generating... (10–90 sec)";
   status.className = "text-cyan-300";
 
   gallery.innerHTML = '';
 
-  const num = 3;           // ← you can make this selectable later
-  const model = "black-forest-labs/FLUX.1-schnell"; // or let user choose
+  const num = 2; // keep small for testing
+  const model = "black-forest-labs/FLUX.1-schnell"; // fastest model
 
   for (let i = 0; i < num; i++) {
     const cell = document.createElement('div');
     cell.className = "relative bg-black/30 rounded-xl overflow-hidden aspect-[4/3] border border-zinc-800/50 flex items-center justify-center";
-    cell.innerHTML = `<div class="spinner"></div>`;
+    cell.innerHTML = `<div class="spinner"></div><p class="absolute text-xs text-zinc-500 bottom-2">Image ${i+1}</p>`;
     gallery.appendChild(cell);
 
     try {
-      const opts = { model };
+      const opts = { 
+        model,
+        test_mode: useTestMode   // ← this is the magic line
+      };
       const negText = neg.value.trim();
       if (negText) opts.negative_prompt = negText;
 
@@ -431,17 +439,20 @@ async function generateImages() {
 
       const dl = document.createElement('a');
       dl.href = url;
-      dl.download = `neural-${Date.now()}.png`;
-      dl.className = "absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-sm hover:bg-black/80 transition";
+      dl.download = `dream-${Date.now()}.png`;
+      dl.className = "absolute bottom-3 right-3 bg-black/70 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-black/90";
       dl.textContent = "↓ Save";
       cell.appendChild(dl);
     } catch (err) {
-      cell.innerHTML = `<div class="text-red-400 text-sm p-4 text-center">Error<br>${err.message||''}</div>`;
+      console.error("Generation error:", err);
+      cell.innerHTML = `<div class="text-red-400 text-sm p-4 text-center">
+        Error<br>${err.message || 'Unknown – try Test Mode or check Puter balance'}
+      </div>`;
     }
   }
 
   genBtn.disabled = false;
-  status.textContent = "Generation finished";
+  status.textContent = useTestMode ? "Quick previews ready (lower res)" : "Generation finished";
   status.className = "text-emerald-400";
 }
 

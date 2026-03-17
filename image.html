@@ -3,146 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEURAL_FORGE | Maximum Reality</title>
+    <title>NEURAL_FORGE_V2 | Maximum Reality</title>
     <script src="https://js.puter.com/v2/"></script>
     <style>
         :root { --blue: #00e5ff; --pink: #ff00ff; --green: #32cd32; }
         * { box-sizing: border-box; background: #000; color: #fff; margin: 0; padding: 0; }
+        body { font-family: 'Courier New', monospace; width: 100vw; display: flex; flex-direction: column; align-items: center; padding: 15px; }
         
-        body { 
-            font-family: 'Courier New', monospace; 
-            width: 100vw; height: 100vh; 
-            overflow-x: hidden;
-            display: flex; flex-direction: column; align-items: center;
-            padding-top: 20px;
-        }
+        .rig { width: 100%; max-width: 430px; border: 2px solid var(--blue); padding: 15px; box-shadow: 0 0 15px var(--blue); }
+        .header { font-size: 12px; color: var(--blue); margin-bottom: 10px; text-align: center; }
 
-        /* 1. MAIN RIG (iPhone 14 Pro Max Locked) */
-        .rig-container {
-            width: 92%; max-width: 430px;
-            border: 2px solid var(--blue);
-            padding: 15px;
-            box-shadow: 0 0 15px var(--blue);
-            margin-bottom: 20px;
-        }
+        input, select { width: 100%; padding: 14px; margin-bottom: 10px; background: #111; border: 1px solid var(--pink); color: #fff; font-size: 16px; }
 
-        .header { font-size: 14px; color: var(--blue); margin-bottom: 15px; text-align: center; font-weight: 900; }
-
-        input, select {
-            width: 100%; padding: 12px; margin-bottom: 10px;
-            background: #111; border: 1px solid var(--pink);
-            color: #fff; font-family: inherit; font-size: 16px; /* Prevents iOS zoom */
-        }
-
-        .btn-group { display: flex; gap: 10px; }
-        button {
-            flex: 1; padding: 12px; border: none; font-weight: 900;
-            background: var(--blue); color: #000; cursor: pointer;
-        }
+        .btn-group { display: flex; gap: 8px; }
+        button { flex: 1; padding: 15px; border: none; font-weight: 900; background: var(--blue); color: #000; cursor: pointer; }
         button.alt { background: var(--pink); }
 
-        /* 2. THE VIEWFINDER */
-        #viewfinder {
-            margin-top: 15px; min-height: 200px;
-            border: 1px dashed #333; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-        }
+        #viewfinder { margin-top: 15px; min-height: 250px; border: 1px dashed #333; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         #viewfinder img { width: 100%; height: auto; border: 1px solid #fff; }
-        .save-btn { 
-            width: 100%; background: var(--green); color: #000; 
-            text-decoration: none; text-align: center; padding: 10px; 
-            font-size: 12px; font-weight: 900; margin-top: 5px;
-        }
+        
+        .save-btn { display:block; width: 100%; background: var(--green); color: #000; text-align: center; padding: 12px; font-weight: 900; text-decoration: none; margin-top: 5px; font-size: 12px; }
+        
+        #history { width: 100%; max-width: 430px; display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; }
+        .thumb { min-width: 70px; height: 70px; border: 1px solid #222; object-fit: cover; }
 
-        /* 3. HISTORY STRIP */
-        .history-label { font-size: 10px; color: #444; width: 92%; margin-bottom: 5px; }
-        #history-strip {
-            width: 92%; display: flex; gap: 10px; overflow-x: auto;
-            padding-bottom: 10px; scrollbar-width: none;
-        }
-        .hist-thumb { 
-            min-width: 80px; height: 80px; border: 1px solid #222; 
-            object-fit: cover; opacity: 0.6; 
-        }
-
-        .loading { color: var(--pink); animation: blink 1s infinite; font-size: 12px; }
+        .status { font-size: 10px; color: var(--pink); margin-top: 10px; text-align: center; }
+        .loading { animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body>
 
-<div class="rig-container">
-    <div class="header">● SECTOR_07 // NEURAL_IMAGE_FORGE</div>
+<div class="rig">
+    <div class="header">● SECTOR_07 // NEURAL_FORGE_V2</div>
     
-    <input type="text" id="promptInput" placeholder="Enter coordinates (prompt)...">
+    <input type="text" id="prompt" placeholder="ENTER_COORDINATES...">
     
-    <select id="styleSelect">
-        <option value="">[ RAW_SIGNAL ]</option>
-        <option value=", cyberpunk neon synthwave style, high contrast, 8k">[ AZUL_VISION ]</option>
-        <option value=", chaotic glitch art, messy ink, neon green accents">[ MOCHKIL_CHAOS ]</option>
-        <option value=", retro 80s arcade, pixel art, vibrant colors">[ LUNA_VERSE ]</option>
+    <select id="model">
+        <option value="black-forest-labs/FLUX.1-schnell">[ FLUX_FAST ]</option>
+        <option value="gpt-image-1.5">[ GPT_VISION ]</option>
+        <option value="dall-e-3">[ DALL_E_ULTRA ]</option>
     </select>
 
     <div class="btn-group">
-        <button onclick="generate()">EXECUTE_GEN</button>
-        <button class="alt" onclick="reset()">RESET</button>
+        <button onclick="forge()">EXECUTE_GEN</button>
+        <button class="alt" onclick="clearRig()">RESET</button>
     </div>
 
+    <div id="status" class="status">SYSTEM_READY</div>
+
     <div id="viewfinder">
-        <p style="color:#444; font-size:10px;">Awaiting Neural Link...</p>
+        <p style="color:#333; font-size:10px;">AWAITING_SIGNAL...</p>
     </div>
 </div>
 
-<div class="history-label">RECOVERY_LOG:</div>
-<div id="history-strip"></div>
+<div id="history"></div>
 
 <script>
-    async function generate() {
-        const input = document.getElementById('promptInput');
-        const style = document.getElementById('styleSelect').value;
+    async function forge() {
+        const promptText = document.getElementById('prompt').value;
+        const modelName = document.getElementById('model').value;
         const viewfinder = document.getElementById('viewfinder');
-        const history = document.getElementById('history-strip');
+        const status = document.getElementById('status');
+        const history = document.getElementById('history');
 
-        if (!input.value) return;
+        if (!promptText) {
+            status.innerText = "ERROR: NO_PROMPT";
+            return;
+        }
 
-        const fullPrompt = input.value + style;
-        viewfinder.innerHTML = "<p class='loading'>[ FORGING_REALITY... ]</p>";
+        status.innerHTML = "<span class='loading'>FORGING_SIGNAL...</span>";
+        viewfinder.innerHTML = "<p class='loading'>[ ... ]</p>";
 
         try {
-            // Using Puter.js - Fast Flux model
-            const imgElement = await puter.ai.txt2img(fullPrompt, { model: 'flux-1-schnell' });
+            // Using the official 2026 Puter.js syntax
+            const img = await puter.ai.txt2img(promptText, { model: modelName });
             
-            // Build the Save/Download link
-            const saveLink = document.createElement('a');
-            saveLink.href = imgElement.src;
-            saveLink.download = `MR_FORGE_${Date.now()}.png`;
-            saveLink.className = "save-btn";
-            saveLink.innerText = "[ SAVE_TO_ARCHIVES ]";
-
-            // Update Viewfinder
+            // Success: Clean up and display
+            status.innerText = "SIGNAL_STABLE";
             viewfinder.innerHTML = "";
-            viewfinder.appendChild(imgElement);
-            viewfinder.appendChild(saveLink);
+            viewfinder.appendChild(img);
 
-            // Add to History Strip
+            // Add Save Button
+            const saveBtn = document.createElement('a');
+            saveBtn.href = img.src;
+            saveBtn.download = `MR_${Date.now()}.png`;
+            saveBtn.className = "save-btn";
+            saveBtn.innerText = "[ SAVE_TO_PHOTOS ]";
+            viewfinder.appendChild(saveBtn);
+
+            // Add to History
             const thumb = document.createElement('img');
-            thumb.src = imgElement.src;
-            thumb.className = "hist-thumb";
-            thumb.onclick = () => { // Tap history to bring back to main view
+            thumb.src = img.src;
+            thumb.className = "thumb";
+            thumb.onclick = () => {
                 viewfinder.innerHTML = "";
                 viewfinder.appendChild(thumb.cloneNode());
-                viewfinder.appendChild(saveLink.cloneNode(true));
+                viewfinder.appendChild(saveBtn.cloneNode(true));
             };
             history.prepend(thumb);
 
-        } catch (e) {
-            viewfinder.innerHTML = "<p style='color:red'>[ LINK_SEVERED ]</p>";
+        } catch (error) {
+            console.error(error);
+            // Check if it's a verification issue
+            if (error.message && error.message.includes("Confirm email")) {
+                status.innerText = "CRITICAL: CONFIRM_EMAIL_AT_PUTER.COM";
+            } else {
+                status.innerText = "LINK_SEVERED: CHECK_CONSOLE";
+            }
         }
     }
 
-    function reset() {
-        document.getElementById('promptInput').value = "";
-        document.getElementById('viewfinder').innerHTML = "<p style='color:#444; font-size:10px;'>Awaiting Neural Link...</p>";
+    function clearRig() {
+        document.getElementById('prompt').value = "";
+        document.getElementById('status').innerText = "SYSTEM_REBOOTED";
+        document.getElementById('viewfinder').innerHTML = "<p style='color:#333; font-size:10px;'>AWAITING_SIGNAL...</p>";
     }
 </script>
 

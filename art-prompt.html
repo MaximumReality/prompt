@@ -146,31 +146,22 @@ Dream Warp will transport you into the rendering dimension.
 </div>
 
 <script>
-document.querySelectorAll('.tag').forEach(el=>{
-el.addEventListener('click',()=>{
-el.classList.toggle('active');
-const tag=el.dataset.tag;
-const ta=document.getElementById('pos');
-if(el.classList.contains('active')){
-if(!ta.value.includes(tag)) ta.value=ta.value.trim()?ta.value.trim()+", "+tag:tag;
-}else{
-ta.value=ta.value.replace(new RegExp(`,? ?${tag}`,'gi'),'').trim();
-}
-});
-});
-
 function dreamWarpLaunch(){
+
 const overlay=document.getElementById("warpOverlay");
 const text=document.getElementById("warpText");
-const prompt=encodeURIComponent(document.getElementById("pos").value||"");
+
+const prompt=document.getElementById("pos").value || "";
+
+navigator.clipboard.writeText(prompt);
 
 overlay.style.opacity=1;
 overlay.style.pointerEvents="all";
 
 const phases=[
 "Stabilizing Dream Signal…",
-"Calibrating Neural Field…",
-"Opening Creative Rift…",
+"Encoding Thought Pattern…",
+"Copying Neural Intent…",
 "Warping into Render Space…"
 ];
 
@@ -182,7 +173,12 @@ if(i<phases.length){
 text.innerText=phases[i];
 }else{
 clearInterval(interval);
-window.open("https://perchance.org/ai-text-to-image-generator?prompt="+prompt,"_blank");
+
+window.open(
+"https://perchance.org/ai-text-to-image-generator",
+"_blank"
+);
+
 overlay.style.opacity=0;
 overlay.style.pointerEvents="none";
 }

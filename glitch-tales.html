@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GLITCH TALES // Story Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #0a0a0c;
+  --bg2: #0f0f14;
+  --bg3: #13131a;
+  --cyan: #00f5ff;
+  --magenta: #ff00aa;
+  --green: #39ff14;
+  --yellow: #ffe600;
+  --orange: #ff6b00;
+  --white: #e8e8f0;
+  --muted: #44445a;
+  --border: rgba(0,245,255,0.15);
+  --glow-cyan: 0 0 20px rgba(0,245,255,0.4), 0 0 60px rgba(0,245,255,0.1);
+  --glow-mag: 0 0 20px rgba(255,0,170,0.4), 0 0 60px rgba(255,0,170,0.1);
+  --glow-green: 0 0 20px rgba(57,255,20,0.4);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Share Tech Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+/* GRAIN OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.6;
+}
+
+/* SCANLINES */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* ═══ HEADER ═══ */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,10,12,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  transition: all 0.3s;
+}
+
+header.scrolled {
+  background: rgba(10,10,12,0.97);
+  border-bottom-color: rgba(0,245,255,0.3);
+  box-shadow: 0 0 30px rgba(0,245,255,0.05);
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  gap: 1.5rem;
+}
+
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 0.12em;
+  color: var(--cyan);
+  text-shadow: var(--glow-cyan);
+  white-space: nowrap;
+  position: relative;
+}
+.logo span { color: var(--magenta); text-shadow: var(--glow-mag); }
+
+.mode-buttons {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.mode-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  padding: 0.3rem 0.75rem;
+  background: transparent;
+  border: 1px solid var(--muted);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+.mode-btn:hover, .mode-btn.active {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: var(--glow-cyan);
+  background: rgba(0,245,255,0.05);
+}
+.mode-btn.active { background: rgba(0,245,255,0.1); }
+
+.chaos-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.chaos-toggle label { cursor: pointer; }
+
+.toggle-switch {
+  position: relative;
+  width: 40px;
+  height: 20px;
+}
+.toggle-switch input { display: none; }
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--muted);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  background: var(--bg);
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+.toggle-switch input:checked + .toggle-slider { background: var(--magenta); box-shadow: var(--glow-mag); }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+/* ═══ HERO ═══ */
+.hero {
+  padding: 5rem 2rem 4rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(0,245,255,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 80% 100%, rgba(255,0,170,0.06) 0%, transparent 70%);
+}
+
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 10vw, 8rem);
+  letter-spacing: 0.05em;
+  line-height: 0.9;
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+
+.hero h1 .line1 { color: var(--white); }
+.hero h1 .line2 {
+  color: var(--cyan);
+  text-shadow: var(--glow-cyan);
+  display: block;
+}
+
+.hero-sub {
+  font-size: 0.8rem;
+  color: var(--muted);
+  letter-spacing: 0.2em;
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.btn-primary {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  padding: 0.8rem 2.5rem;
+  background: var(--cyan);
+  color: var(--bg);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+.btn-primary:hover {
+  background: var(--white);
+  box-shadow: var(--glow-cyan);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  padding: 0.8rem 2.5rem;
+  background: transparent;
+  color: var(--magenta);
+  border: 1px solid var(--magenta);
+  cursor: pointer;
+  transition: all 0.2s;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+.btn-secondary:hover {
+  background: rgba(255,0,170,0.1);
+  box-shadow: var(--glow-mag);
+  transform: translateY(-2px);
+}
+
+/* ═══ STORY REACTOR ═══ */
+.reactor-container {
+  max-width: 900px;
+  margin: 0 auto 2rem;
+  padding: 0 2rem;
+  position: relative;
+}
+
+.reactor-panel {
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.reactor-panel::before {
+  content: 'STORY REACTOR // ONLINE';
+  position: absolute;
+  top: 0.5rem;
+  left: 1rem;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--green);
+  opacity: 0.6;
+}
+.reactor-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,245,255,0.02) 0%, transparent 50%, rgba(255,0,170,0.02) 100%);
+  pointer-events: none;
+}
+
+.reactor-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  color: var(--cyan);
+  opacity: 0.7;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+#story-output {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--white);
+  min-height: 100px;
+  position: relative;
+}
+
+.cursor-blink {
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  background: var(--cyan);
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+  margin-left: 2px;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.story-placeholder {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+/* ═══ SECTION WRAPPER ═══ */
+.section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+.section-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  color: var(--magenta);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgba(255,0,170,0.3), transparent);
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+  color: var(--white);
+}
+
+/* ═══ INGREDIENTS ═══ */
+.ingredient-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.ingredient-group {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 1.2rem;
+  position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.ingredient-group.visible { opacity: 1; transform: translateY(0); }
+
+.ingredient-group-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--yellow);
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255,230,0,0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ingredient-icon { font-size: 0.8rem; }
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.tag {
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.6rem;
+  background: transparent;
+  border: 1px solid var(--muted);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  opacity: 0;
+  transform: scale(0.9);
+}
+.tag.visible { opacity: 1; transform: scale(1); }
+.tag:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: rgba(0,245,255,0.05);
+}
+.tag.selected {
+  border-color: var(--cyan);
+  color: var(--bg);
+  background: var(--cyan);
+  box-shadow: 0 0 10px rgba(0,245,255,0.3);
+}
+
+.chaos-btn-small {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  padding: 0.4rem 1rem;
+  background: rgba(255,0,170,0.1);
+  border: 1px solid var(--magenta);
+  color: var(--magenta);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 1.5rem;
+}
+.chaos-btn-small:hover { background: rgba(255,0,170,0.2); box-shadow: var(--glow-mag); }
+
+/* ═══ MODIFIERS ═══ */
+.modifiers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.modifier-item {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 1.2rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.modifier-item.visible { opacity: 1; transform: translateY(0); }
+
+.modifier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.modifier-name {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--white);
+}
+
+.modifier-value {
+  font-size: 0.65rem;
+  color: var(--cyan);
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.1em;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 2px;
+  background: var(--muted);
+  outline: none;
+  cursor: pointer;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--cyan);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  cursor: pointer;
+  transition: transform 0.1s;
+  box-shadow: 0 0 8px rgba(0,245,255,0.6);
+}
+.slider::-webkit-slider-thumb:hover { transform: scale(1.3); }
+.slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--cyan);
+  border: none;
+  cursor: pointer;
+}
+
+/* ═══ EXPERIMENT CARDS ═══ */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.exp-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+}
+.exp-card.visible { opacity: 1; transform: translateY(0); }
+
+.exp-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.exp-card[data-color="cyan"]::before { background: rgba(0,245,255,0.05); }
+.exp-card[data-color="magenta"]::before { background: rgba(255,0,170,0.05); }
+.exp-card[data-color="green"]::before { background: rgba(57,255,20,0.05); }
+.exp-card[data-color="yellow"]::before { background: rgba(255,230,0,0.05); }
+.exp-card[data-color="orange"]::before { background: rgba(255,107,0,0.05); }
+
+.exp-card:hover::before { opacity: 1; }
+.exp-card:hover { transform: translateY(-3px) scale(1.02); }
+.exp-card[data-color="cyan"]:hover { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+.exp-card[data-color="magenta"]:hover { border-color: var(--magenta); box-shadow: var(--glow-mag); }
+.exp-card[data-color="green"]:hover { border-color: var(--green); box-shadow: var(--glow-green); }
+.exp-card[data-color="yellow"]:hover { border-color: var(--yellow); box-shadow: 0 0 20px rgba(255,230,0,0.3); }
+.exp-card[data-color="orange"]:hover { border-color: var(--orange); box-shadow: 0 0 20px rgba(255,107,0,0.3); }
+
+.exp-card-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+.exp-card-title { font-size: 0.75rem; letter-spacing: 0.1em; color: var(--white); margin-bottom: 0.3rem; }
+.exp-card-desc { font-size: 0.6rem; color: var(--muted); line-height: 1.4; }
+
+/* ═══ FINAL ACTIONS ═══ */
+.actions-zone {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--cyan);
+  padding: 2.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.actions-zone::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+}
+
+.actions-zone h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+  color: var(--white);
+}
+.actions-zone p {
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-action {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  padding: 0.7rem 2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+.btn-copy { background: var(--green); color: var(--bg); border: none; }
+.btn-copy:hover { box-shadow: var(--glow-green); transform: translateY(-2px); }
+.btn-remix { background: transparent; color: var(--yellow); border: 1px solid var(--yellow); }
+.btn-remix:hover { background: rgba(255,230,0,0.1); box-shadow: 0 0 20px rgba(255,230,0,0.3); transform: translateY(-2px); }
+.btn-break { background: transparent; color: var(--magenta); border: 1px solid var(--magenta); }
+.btn-break:hover { background: rgba(255,0,170,0.1); box-shadow: var(--glow-mag); transform: translateY(-2px); }
+
+.copy-feedback {
+  font-size: 0.65rem;
+  color: var(--green);
+  letter-spacing: 0.15em;
+  margin-top: 0.8rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.copy-feedback.show { opacity: 1; }
+
+/* ═══ FOOTER ═══ */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem;
+  text-align: center;
+}
+.footer-text {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  line-height: 2;
+}
+.footer-text span { color: var(--cyan); }
+.footer-text em { color: var(--magenta); font-style: normal; }
+
+/* ═══ GLITCH ANIMATION ═══ */
+@keyframes glitch {
+  0% { transform: translate(0); filter: none; }
+  20% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
+  40% { transform: translate(2px, -1px); filter: brightness(1.5); }
+  60% { transform: translate(-1px, 2px); filter: hue-rotate(-90deg); }
+  80% { transform: translate(1px, -2px); filter: none; }
+  100% { transform: translate(0); filter: none; }
+}
+
+.glitch-text {
+  animation: glitch 0.3s ease-in-out;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero h1, .hero-sub, .hero-ctas {
+  animation: fadeUp 0.8s ease-out forwards;
+}
+.hero-sub { animation-delay: 0.15s; opacity: 0; }
+.hero-ctas { animation-delay: 0.3s; opacity: 0; }
+
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(0,245,255,0.15); }
+  50% { border-color: rgba(0,245,255,0.4); }
+}
+
+.reactor-panel { animation: pulse-border 3s ease-in-out infinite; }
+
+/* ═══ NOTIFICATION ═══ */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--bg3);
+  border: 1px solid var(--green);
+  color: var(--green);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  padding: 0.7rem 1.2rem;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ═══ CHAOS MODE ═══ */
+body.chaos-mode {
+  animation: chaos-bg 0.5s infinite;
+}
+@keyframes chaos-bg {
+  0% { filter: hue-rotate(0deg); }
+  25% { filter: hue-rotate(10deg) brightness(1.02); }
+  50% { filter: hue-rotate(-5deg); }
+  75% { filter: hue-rotate(5deg) brightness(0.99); }
+  100% { filter: hue-rotate(0deg); }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="header-inner">
+    <div class="logo">GLITCH<span>TALES</span></div>
+    <div class="mode-buttons">
+      <button class="mode-btn active" data-mode="short">SHORT</button>
+      <button class="mode-btn" data-mode="absurd">ABSURD</button>
+      <button class="mode-btn" data-mode="emotional">EMOTIONAL</button>
+      <button class="mode-btn" data-mode="chaotic">CHAOTIC</button>
+    </div>
+    <div class="chaos-toggle">
+      <label for="chaos-check">UNHINGED MODE</label>
+      <label class="toggle-switch">
+        <input type="checkbox" id="chaos-check">
+        <div class="toggle-slider"></div>
+      </label>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <h1>
+    <span class="line1">STORIES THAT</span>
+    <span class="line2">SHOULDN'T EXIST</span>
+  </h1>
+  <p class="hero-sub">// IMAGINATION CONSOLE ONLINE // REALITY NOT GUARANTEED // PROCEED WITH CURIOSITY //</p>
+  <div class="hero-ctas">
+    <button class="btn-primary" id="generate-btn">⚡ GENERATE STORY</button>
+    <button class="btn-secondary" id="randomize-btn">🎲 RANDOMIZE EVERYTHING</button>
+  </div>
+</section>
+
+<!-- LIVE OUTPUT -->
+<div class="reactor-container">
+  <div class="reactor-panel">
+    <div class="reactor-label">// LIVE TRANSMISSION //</div>
+    <div id="story-output">
+      <span class="story-placeholder">[ select ingredients below or smash randomize — the machine is waiting ]</span>
+    </div>
+    <span class="cursor-blink"></span>
+  </div>
+</div>
+
+<!-- STORY INGREDIENTS -->
+<section class="section">
+  <div class="section-label">INGREDIENT MATRIX</div>
+  <h2 class="section-title">WHAT GOES IN THE POT?</h2>
+  <div class="ingredient-grid" id="ingredient-grid">
+    <!-- dynamically populated -->
+  </div>
+  <button class="chaos-btn-small" id="chaos-ingredients">⚡ CHAOS SELECTION // SHUFFLE THE SOUP</button>
+</section>
+
+<!-- MODIFIERS -->
+<section class="section">
+  <div class="section-label">DIAL CALIBRATION</div>
+  <h2 class="section-title">TUNE THE FREQUENCY</h2>
+  <div class="modifiers-grid">
+    <div class="modifier-item">
+      <div class="modifier-header">
+        <span class="modifier-name">⚡ WEIRDNESS</span>
+        <span class="modifier-value" id="weird-val">50</span>
+      </div>
+      <input type="range" class="slider" id="weird-slider" min="0" max="100" value="50">
+    </div>
+    <div class="modifier-item">
+      <div class="modifier-header">
+        <span class="modifier-name">🎭 DRAMA</span>
+        <span class="modifier-value" id="drama-val">30</span>
+      </div>
+      <input type="range" class="slider" id="drama-slider" min="0" max="100" value="30">
+    </div>
+    <div class="modifier-item">
+      <div class="modifier-header">
+        <span class="modifier-name">🌀 ABSURDITY</span>
+        <span class="modifier-value" id="absurd-val">60</span>
+      </div>
+      <input type="range" class="slider" id="absurd-slider" min="0" max="100" value="60">
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIMENT CARDS -->
+<section class="section">
+  <div class="section-label">PRELOADED SCENARIOS</div>
+  <h2 class="section-title">PUSH THESE BUTTONS</h2>
+  <div class="cards-grid">
+    <div class="exp-card" data-color="cyan" data-preset="sad">
+      <span class="exp-card-icon">🌧️</span>
+      <div class="exp-card-title">MAKE IT SAD</div>
+      <div class="exp-card-desc">Not cry-in-a-bathroom sad. Cry-while-eating-cereal sad.</div>
+    </div>
+    <div class="exp-card" data-color="magenta" data-preset="ridiculous">
+      <span class="exp-card-icon">🎪</span>
+      <div class="exp-card-title">MAKE IT RIDICULOUS</div>
+      <div class="exp-card-desc">Logic has left the chat. Physics is on vacation.</div>
+    </div>
+    <div class="exp-card" data-color="yellow" data-preset="twist">
+      <span class="exp-card-icon">🌀</span>
+      <div class="exp-card-title">ADD PLOT TWIST</div>
+      <div class="exp-card-desc">None of this was real. Or was it? (It wasn't.)</div>
+    </div>
+    <div class="exp-card" data-color="green" data-preset="wholesome">
+      <span class="exp-card-icon">🌱</span>
+      <div class="exp-card-title">MAKE IT WHOLESOME</div>
+      <div class="exp-card-desc">Against all odds, everyone will be okay. Probably.</div>
+    </div>
+    <div class="exp-card" data-color="orange" data-preset="horror">
+      <span class="exp-card-icon">👁️</span>
+      <div class="exp-card-title">ADD DREAD</div>
+      <div class="exp-card-desc">Something is wrong but nobody will say what.</div>
+    </div>
+    <div class="exp-card" data-color="cyan" data-preset="poetic">
+      <span class="exp-card-icon">✨</span>
+      <div class="exp-card-title">GET POETIC</div>
+      <div class="exp-card-desc">Metaphors are now structurally load-bearing.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL ACTIONS -->
+<section class="section">
+  <div class="actions-zone">
+    <h2>YOU MADE SOMETHING STRANGE</h2>
+    <p>// DO SOMETHING WITH IT OR MAKE IT WEIRDER //</p>
+    <div class="action-buttons">
+      <button class="btn-action btn-copy" id="copy-btn">📋 COPY STORY</button>
+      <button class="btn-action btn-remix" id="remix-btn">🔀 REMIX</button>
+      <button class="btn-action btn-break" id="break-btn">💥 BREAK IT AGAIN</button>
+    </div>
+    <div class="copy-feedback" id="copy-feedback">// STORY COPIED TO CLIPBOARD //</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-text">
+    <span>GLITCH TALES</span> // STORY FORGE v∞.??<br>
+    made for fun // not responsible for <em>strange ideas</em><br>
+    no fictional toasters were harmed in the making of these stories<br>
+    <span>MAXIMUM REALITY</span> // signal lost // signal found //
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════
+
+const INGREDIENTS = {
+  CHARACTER: {
+    icon: '👤',
+    color: 'cyan',
+    tags: ['tired wizard', 'sentient toaster', 'retired mime', 'anxious librarian', 'confused robot', 'ghost accountant', 'time-traveling barista', 'quantum cat', 'discount oracle', 'sad detective', 'immortal plumber', 'overqualified snail']
+  },
+  SETTING: {
+    icon: '🌍',
+    color: 'magenta',
+    tags: ['floating mall', 'abandoned moon café', 'inside a dream', 'the last bookstore', 'cursed elevator', 'underwater suburb', 'parallel post office', 'digital forest', 'neon monastery', 'forgotten theme park', 'fog-filled library', 'the edge of a map']
+  },
+  MOOD: {
+    icon: '🎭',
+    color: 'yellow',
+    tags: ['melancholy but funny', 'existential panic', 'quietly hopeful', 'suspicious calm', 'nostalgic for things that never happened', 'cozy but wrong', 'aggressively neutral', 'tender chaos']
+  },
+  TWIST: {
+    icon: '🌀',
+    color: 'green',
+    tags: ['time loop', 'identity swap', 'wrong universe', 'everyone already knew', 'it was a test', 'gravity optional', 'the narrator lied', 'it ends where it began', 'someone disappears slowly']
+  },
+  STYLE: {
+    icon: '✍️',
+    color: 'orange',
+    tags: ['poetic', 'chaotic', 'deadpan', 'extremely formal', 'breathless run-on', 'haiku energy', 'documentary', 'reluctant confession']
+  }
+};
+
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+
+let state = {
+  mode: 'short',
+  chaos: false,
+  selected: {},
+  modifiers: { weirdness: 50, drama: 30, absurdity: 60 },
+  currentStory: '',
+  generating: false
+};
+
+// ═══════════════════════════════════════════
+//  STORY TEMPLATES
+// ═══════════════════════════════════════════
+
+const templates = {
+  short: [
+    '{character} woke up in {setting} with no explanation and no plans to find one. The {mood} feeling had been there for weeks. Eventually, {twist}, and somehow that made everything make more sense.',
+    'Nobody told {character} about {setting} until it was already too late. Standing there, {mood}, they did the only thing they could: absolutely nothing, very deliberately. That is when {twist}.',
+    '{character} had visited {setting} seventeen times. Each time felt different. This time it was {mood}, and {twist}. They wrote about it in their journal using someone else\'s handwriting.',
+    'The only person who understood {setting} was {character}. They never explained why. The answer was {mood}, then {twist}, then silence.',
+  ],
+  absurd: [
+    '{character} arrived at {setting} carrying three things: a receipt, a feeling, and the wrong kind of sorrow. The {mood} atmosphere made perfect sense if you didn\'t think about it. {twist}. A pigeon witnessed everything and said nothing.',
+    'According to regulations, {character} was not allowed to exist in {setting} on Tuesdays. It was a Wednesday. The rules said nothing about this. {mood}. {twist}. The ceiling applauded.',
+    '{character} had accidentally become the world\'s leading expert on {setting} during a different emergency. {mood}. {twist}. This qualified them for nothing and everything simultaneously.',
+  ],
+  emotional: [
+    '{character} returned to {setting} years after swearing they never would. The {mood} sensation arrived before they\'d even opened the door. {twist}. They stayed longer than planned.',
+    'Some places hold grief like water holds light. {character} knew this. {setting} knew this too. {mood}, and then {twist}, and then something that felt like an ending but wasn\'t.',
+    '{character} wrote a letter to {setting} that they never sent. It started with "I\'m not angry anymore." It ended differently. {mood}. {twist}. They burned the letter. It burned slowly, which felt accurate.',
+  ],
+  chaotic: [
+    'REPORT: {character} entered {setting} at 3:47pm. LEFT at 3:47pm (different day). {mood} levels: CRITICAL. {twist}. Investigation ongoing. Nobody is investigating. This is fine.',
+    '{character}!!! in {setting}!!! {mood}!!! but then {twist}!!! the clocks are all wrong!!! who approved this!!! someone is responsible!!! it might be you!!!',
+    'classified: {character} / location: {setting} / emotional state: {mood} / incident: {twist} / recommended action: none / actual action: also none / end of report',
+  ]
+};
+
+const fillers = {
+  twist_phrases: [
+    'that is when {twist}',
+    'and then, without warning, {twist}',
+    '{twist} happened like it had been scheduled',
+    'the whole time, {twist} had been quietly occurring',
+    '{twist}, which explained the smell'
+  ],
+  mood_phrases: [
+    'the {mood} atmosphere pressed in from all sides',
+    'everything felt {mood}',
+    'the air was inexplicably {mood}',
+    'something about the light made it feel {mood}'
+  ]
+};
+
+function getRandomItem(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function buildStory() {
+  const char = getRandomSelected('CHARACTER') || getRandomItem(INGREDIENTS.CHARACTER.tags);
+  const setting = getRandomSelected('SETTING') || getRandomItem(INGREDIENTS.SETTING.tags);
+  const mood = getRandomSelected('MOOD') || getRandomItem(INGREDIENTS.MOOD.tags);
+  const twist = getRandomSelected('TWIST') || getRandomItem(INGREDIENTS.TWIST.tags);
+  const style = getRandomSelected('STYLE');
+
+  const mode = state.mode;
+  const pool = templates[mode] || templates.short;
+  let template = getRandomItem(pool);
+
+  // Apply modifier influence
+  const w = state.modifiers.weirdness;
+  const d = state.modifiers.drama;
+  const a = state.modifiers.absurdity;
+
+  let story = template
+    .replace(/{character}/g, char)
+    .replace(/{setting}/g, setting)
+    .replace(/{mood}/g, mood)
+    .replace(/{twist}/g, twist);
+
+  // High weirdness: add strange appendage
+  if (w > 75) {
+    const weirdEndings = [
+      ' Also the floor was a different floor.',
+      ' A second {character} watched from behind a fern.'.replace('{character}', char),
+      ' The Wi-Fi password was a warning.',
+      ' There were too many chairs. There are always too many chairs.',
+      ' The color blue was not available that day.',
+    ];
+    story += getRandomItem(weirdEndings);
+  }
+
+  // High drama: add dramatic statement
+  if (d > 70) {
+    const dramatic = [
+      ' This changed everything.',
+      ' Nothing would ever be the same, and that had to be enough.',
+      ' For a moment, the whole world held its breath.',
+      ' It was the kind of thing you spend years not talking about.',
+    ];
+    story += getRandomItem(dramatic);
+  }
+
+  // High absurdity: prepend absurd opener
+  if (a > 75) {
+    const absurdOpeners = [
+      '[TRANSMISSION BEGINS] ',
+      '[UNVERIFIED ACCOUNT] ',
+      '[NOTE: THIS DID NOT HAPPEN] ',
+      '[PROBABLE] ',
+    ];
+    story = getRandomItem(absurdOpeners) + story;
+  }
+
+  // Style influence
+  if (style === 'deadpan') {
+    story = story.replace(/!+/g, '.').replace(/\?+/g, '.');
+  } else if (style === 'chaotic') {
+    story = story.replace(/\. /g, '!!! ').replace(/\.$/, '!!!');
+  } else if (style === 'extremely formal') {
+    story = 'OFFICIAL RECORD: ' + story + ' — End of document.';
+  } else if (style === 'reluctant confession') {
+    story = 'Fine. Here is what happened. ' + story + ' I am not proud of remembering this.';
+  } else if (style === 'haiku energy') {
+    story = story.split('. ').slice(0, 2).join('. ') + '.';
+  }
+
+  // Unhinged mode: glitch the text
+  if (state.chaos) {
+    const glitchChars = ['̶', '̴', '͎', '̵', '̷'];
+    story = story.split('').map(c => {
+      if (Math.random() < 0.04 && c !== ' ') {
+        return c + getRandomItem(glitchChars);
+      }
+      return c;
+    }).join('');
+  }
+
+  return story;
+}
+
+function getRandomSelected(category) {
+  const sel = state.selected[category];
+  if (sel && sel.size > 0) {
+    const arr = [...sel];
+    return getRandomItem(arr);
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════
+//  RENDER INGREDIENTS
+// ═══════════════════════════════════════════
+
+function renderIngredients() {
+  const grid = document.getElementById('ingredient-grid');
+  grid.innerHTML = '';
+
+  Object.entries(INGREDIENTS).forEach(([category, data]) => {
+    if (!state.selected[category]) state.selected[category] = new Set();
+
+    const group = document.createElement('div');
+    group.className = 'ingredient-group';
+
+    group.innerHTML = `
+      <div class="ingredient-group-label">
+        <span>${category}</span>
+        <span class="ingredient-icon">${data.icon}</span>
+      </div>
+      <div class="tags" id="tags-${category}"></div>
+    `;
+    grid.appendChild(group);
+
+    const tagsContainer = group.querySelector(`#tags-${category}`);
+    data.tags.forEach((tag, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'tag';
+      btn.textContent = tag;
+      btn.dataset.category = category;
+      btn.dataset.tag = tag;
+      btn.style.transitionDelay = `${i * 40}ms`;
+      btn.addEventListener('click', () => toggleTag(category, tag, btn));
+      tagsContainer.appendChild(btn);
+    });
+  });
+
+  // Trigger animations
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.ingredient-group').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), i * 80);
+    });
+    document.querySelectorAll('.tag').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 200 + i * 30);
+    });
+  });
+}
+
+function toggleTag(category, tag, btn) {
+  if (state.selected[category].has(tag)) {
+    state.selected[category].delete(tag);
+    btn.classList.remove('selected');
+  } else {
+    state.selected[category].add(tag);
+    btn.classList.add('selected');
+  }
+  generateStory();
+}
+
+// ═══════════════════════════════════════════
+//  STORY GENERATION
+// ═══════════════════════════════════════════
+
+let typewriterTimer = null;
+
+function generateStory() {
+  const story = buildStory();
+  state.currentStory = story;
+  typewriteStory(story);
+}
+
+function typewriteStory(text) {
+  if (typewriterTimer) clearTimeout(typewriterTimer);
+  const el = document.getElementById('story-output');
+  el.classList.add('glitch-text');
+  setTimeout(() => el.classList.remove('glitch-text'), 300);
+
+  el.textContent = '';
+  let i = 0;
+  const speed = Math.max(15, 30 - (state.modifiers.absurdity / 10));
+
+  function type() {
+    if (i < text.length) {
+      el.textContent += text[i];
+      i++;
+      typewriterTimer = setTimeout(type, speed);
+    }
+  }
+  type();
+}
+
+// ═══════════════════════════════════════════
+//  RANDOMIZE
+// ═══════════════════════════════════════════
+
+function randomizeAll() {
+  // Clear all selections
+  Object.keys(state.selected).forEach(cat => state.selected[cat] = new Set());
+  document.querySelectorAll('.tag.selected').forEach(t => t.classList.remove('selected'));
+
+  // Pick 1-2 from each category
+  Object.entries(INGREDIENTS).forEach(([category, data]) => {
+    const count = Math.random() < 0.5 ? 1 : 2;
+    const shuffled = [...data.tags].sort(() => Math.random() - 0.5);
+    shuffled.slice(0, count).forEach(tag => {
+      state.selected[category].add(tag);
+      const btn = document.querySelector(`.tag[data-category="${category}"][data-tag="${tag}"]`);
+      if (btn) btn.classList.add('selected');
+    });
+  });
+
+  // Randomize sliders
+  document.getElementById('weird-slider').value = Math.floor(Math.random() * 100);
+  document.getElementById('drama-slider').value = Math.floor(Math.random() * 100);
+  document.getElementById('absurd-slider').value = Math.floor(Math.random() * 100);
+  updateModifiers();
+
+  // Random mode
+  const modes = ['short', 'absurd', 'emotional', 'chaotic'];
+  setMode(modes[Math.floor(Math.random() * modes.length)]);
+
+  generateStory();
+  showToast('// EVERYTHING RANDOMIZED // GOOD LUCK //');
+}
+
+function chaosIngredients() {
+  Object.keys(state.selected).forEach(cat => state.selected[cat] = new Set());
+  document.querySelectorAll('.tag.selected').forEach(t => t.classList.remove('selected'));
+
+  Object.entries(INGREDIENTS).forEach(([category, data]) => {
+    const shuffled = [...data.tags].sort(() => Math.random() - 0.5);
+    const pick = shuffled[0];
+    state.selected[category].add(pick);
+    const btn = document.querySelector(`.tag[data-category="${category}"][data-tag="${pick}"]`);
+    if (btn) btn.classList.add('selected');
+  });
+
+  generateStory();
+  showToast('// CHAOS SELECTION ACTIVATED //');
+}
+
+// ═══════════════════════════════════════════
+//  PRESETS
+// ═══════════════════════════════════════════
+
+const presets = {
+  sad: {
+    mode: 'emotional',
+    modifiers: { weirdness: 20, drama: 85, absurdity: 15 },
+    forceIngredients: { MOOD: 'nostalgic for things that never happened', TWIST: 'everyone already knew' }
+  },
+  ridiculous: {
+    mode: 'absurd',
+    modifiers: { weirdness: 95, drama: 10, absurdity: 100 },
+    forceIngredients: { MOOD: 'aggressively neutral', TWIST: 'gravity optional' }
+  },
+  twist: {
+    mode: 'chaotic',
+    modifiers: { weirdness: 70, drama: 70, absurdity: 70 },
+    forceIngredients: { TWIST: getRandomItem(['the narrator lied', 'wrong universe', 'it ends where it began']) }
+  },
+  wholesome: {
+    mode: 'emotional',
+    modifiers: { weirdness: 30, drama: 50, absurdity: 20 },
+    forceIngredients: { MOOD: 'quietly hopeful', TWIST: 'it was a test' }
+  },
+  horror: {
+    mode: 'short',
+    modifiers: { weirdness: 60, drama: 80, absurdity: 30 },
+    forceIngredients: { MOOD: 'suspicious calm', TWIST: 'someone disappears slowly' }
+  },
+  poetic: {
+    mode: 'emotional',
+    modifiers: { weirdness: 40, drama: 60, absurdity: 25 },
+    forceIngredients: { STYLE: 'poetic', MOOD: 'melancholy but funny' }
+  }
+};
+
+function applyPreset(name) {
+  const preset = presets[name];
+  if (!preset) return;
+
+  setMode(preset.mode);
+
+  state.modifiers = { ...preset.modifiers };
+  document.getElementById('weird-slider').value = preset.modifiers.weirdness;
+  document.getElementById('drama-slider').value = preset.modifiers.drama;
+  document.getElementById('absurd-slider').value = preset.modifiers.absurdity;
+  document.getElementById('weird-val').textContent = preset.modifiers.weirdness;
+  document.getElementById('drama-val').textContent = preset.modifiers.drama;
+  document.getElementById('absurd-val').textContent = preset.modifiers.absurdity;
+
+  if (preset.forceIngredients) {
+    Object.entries(preset.forceIngredients).forEach(([cat, tag]) => {
+      if (!state.selected[cat]) state.selected[cat] = new Set();
+      state.selected[cat].add(tag);
+      const btn = document.querySelector(`.tag[data-category="${cat}"][data-tag="${tag}"]`);
+      if (btn) btn.classList.add('selected');
+    });
+  }
+
+  generateStory();
+}
+
+// ═══════════════════════════════════════════
+//  MODE
+// ═══════════════════════════════════════════
+
+function setMode(mode) {
+  state.mode = mode;
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === mode);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  MODIFIERS
+// ═══════════════════════════════════════════
+
+function updateModifiers() {
+  state.modifiers.weirdness = parseInt(document.getElementById('weird-slider').value);
+  state.modifiers.drama = parseInt(document.getElementById('drama-slider').value);
+  state.modifiers.absurdity = parseInt(document.getElementById('absurd-slider').value);
+  document.getElementById('weird-val').textContent = state.modifiers.weirdness;
+  document.getElementById('drama-val').textContent = state.modifiers.drama;
+  document.getElementById('absurd-val').textContent = state.modifiers.absurdity;
+}
+
+// ═══════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ═══════════════════════════════════════════
+//  SCROLL ANIMATIONS
+// ═══════════════════════════════════════════
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+// ═══════════════════════════════════════════
+//  EVENT LISTENERS
+// ═══════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderIngredients();
+
+  // Mode buttons
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setMode(btn.dataset.mode);
+      generateStory();
+    });
+  });
+
+  // Generate
+  document.getElementById('generate-btn').addEventListener('click', generateStory);
+
+  // Randomize
+  document.getElementById('randomize-btn').addEventListener('click', randomizeAll);
+  document.getElementById('chaos-ingredients').addEventListener('click', chaosIngredients);
+
+  // Sliders
+  ['weird', 'drama', 'absurd'].forEach(name => {
+    document.getElementById(`${name}-slider`).addEventListener('input', () => {
+      updateModifiers();
+      if (state.currentStory) generateStory();
+    });
+  });
+
+  // Chaos toggle
+  document.getElementById('chaos-check').addEventListener('change', (e) => {
+    state.chaos = e.target.checked;
+    document.body.classList.toggle('chaos-mode', state.chaos);
+    if (state.currentStory) generateStory();
+    if (state.chaos) showToast('// UNHINGED MODE: ACTIVE // USE RESPONSIBLY // (don\'t) //');
+  });
+
+  // Experiment cards
+  document.querySelectorAll('.exp-card').forEach(card => {
+    card.addEventListener('click', () => {
+      applyPreset(card.dataset.preset);
+      showToast(`// PRESET LOADED: ${card.querySelector('.exp-card-title').textContent} //`);
+    });
+  });
+
+  // Copy
+  document.getElementById('copy-btn').addEventListener('click', () => {
+    if (!state.currentStory) return;
+    navigator.clipboard.writeText(state.currentStory).then(() => {
+      const fb = document.getElementById('copy-feedback');
+      fb.classList.add('show');
+      setTimeout(() => fb.classList.remove('show'), 2000);
+    });
+  });
+
+  // Remix
+  document.getElementById('remix-btn').addEventListener('click', generateStory);
+
+  // Break
+  document.getElementById('break-btn').addEventListener('click', () => {
+    state.modifiers.weirdness = 100;
+    state.modifiers.absurdity = 100;
+    state.modifiers.drama = Math.floor(Math.random() * 100);
+    document.getElementById('weird-slider').value = 100;
+    document.getElementById('absurd-slider').value = 100;
+    document.getElementById('weird-val').textContent = 100;
+    document.getElementById('absurd-val').textContent = 100;
+    document.getElementById('chaos-check').checked = true;
+    state.chaos = true;
+    document.body.classList.add('chaos-mode');
+    setMode('chaotic');
+    randomizeAll();
+    showToast('// MAXIMUM INSTABILITY // IT\'S BEAUTIFUL //');
+  });
+
+  // Scroll: sticky header
+  window.addEventListener('scroll', () => {
+    document.getElementById('header').classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // Observe modifier items and exp cards for scroll animations
+  document.querySelectorAll('.modifier-item, .exp-card').forEach(el => observer.observe(el));
+});
+</script>
+</body>
+</html>

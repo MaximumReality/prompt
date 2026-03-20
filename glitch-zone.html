@@ -293,7 +293,7 @@ body.chaos-mode{animation:chaos-bg .5s infinite;}
 
 <footer>
   <div class="footer-text">
-    <span>GLITCH TALES</span> // STORY FORGE v2.∞<br>
+    <span>GLITCH TALES</span> // STORY FORGE v2.1 stable unhinged<br>
     made for fun // not responsible for <em>strange ideas</em><br>
     featuring <strong>AZUL ✦ MOCHKIL ✦ LORI</strong> from <span>MAXIMUM REALITY</span><br>
     no toasters were harmed // signal lost // signal found //
@@ -496,19 +496,22 @@ function getSel(cat){ const s=state.selected[cat]; return(s&&s.size>0)?[...s][rn
 function getAllSel(cat){ const s=state.selected[cat]; return(s&&s.size>0)?[...s]:[]; }
 
 function buildCharString(){
-  const legs=[...state.selectedLegends].map(id=>LEGENDS.find(l=>l.id===id).name.toLowerCase());
-  const tags=getAllSel('CHARACTER');
-  const all=[...legs,...tags];
+  const legs=[...state.selectedLegends]
+    .map(id=>{ const l=LEGENDS.find(l=>l.id===id); return l?l.name.toLowerCase():null; })
+    .filter(Boolean);
+  const all=[...legs,...getAllSel('CHARACTER')];
   if(!all.length) return rnd(INGREDIENTS.CHARACTER.tags);
   if(all.length===1) return all[0];
   if(all.length===2) return `${all[0]} and ${all[1]}`;
-  return `${all.slice(0,-1).join(', ')}, and ${all[all.length-1]} (a collaboration nobody requested)`;
+  const last=all[all.length-1];
+  return `${all.slice(0,-1).join(', ')}, and ${last} (a collaboration nobody requested)`;
 }
 
 function getLegendLine(){
   const legs=[...state.selectedLegends];
   if(!legs.length) return null;
-  return rnd(LEGEND_LINES[rnd(legs)]);
+  const lines=legs.map(id=>LEGEND_LINES[id]).filter(Boolean).flat();
+  return lines.length?rnd(lines):null;
 }
 
 // ══════════════════════════════════════════
@@ -576,19 +579,44 @@ function buildStory(){
   return story;
 }
 
+// ══════════════════════════════════════════
+//  CHAOS CHARACTER LINES
+// ══════════════════════════════════════════
+
+const MOCHKIL_LINES = ['sheesh','fr fr','lowkey unhinged','big oof','vibe check failed','no cap','bet','deadass','sus','this ain\'t it'];
+const AZUL_LINES    = ['stay glitchy.','quantum fluctuations detected.','observing entropy.','calculating chaos.','the lab is watching.'];
+const LIGHT_LINES   = ['la la la… chaos mode.','beep boop bop!','red! yellow! green!','rhythm overrides logic.','I hummed and reality wobbled.'];
+
 function applyChaos(s){
   const words=s.split(' ');
-  // Insert filler words randomly
+
+  // Step 1: Insert filler words randomly (~6% per word)
   const withFillers=words.flatMap(w=>Math.random()<.06?[rnd(CHAOS_FILLERS),w]:[w]);
-  // Shuffle small 4-word chunks ~25% of the time
+
+  // Step 2: Shuffle small 4-word chunks ~25% of the time
   const chunks=[];
   for(let i=0;i<withFillers.length;i+=4){
     const chunk=withFillers.slice(i,i+4);
     chunks.push(...(Math.random()<.25&&chunk.length===4?chunk.sort(()=>Math.random()-.5):chunk));
   }
-  // Glitch char overlay
+
+  // Step 3: Inline character cluster interruptions (~4% per word)
+  const withInterrupts=chunks.map(word=>{
+    if(Math.random()>.04) return word;
+    const cluster=[];
+    if(Math.random()<.6) cluster.push(`Mochkil: ${rnd(MOCHKIL_LINES)}`);
+    if(Math.random()<.5) cluster.push(`Azul: ${rnd(AZUL_LINES)}`);
+    if(Math.random()<.3) cluster.push(`Singing Traffic Light: ${rnd(LIGHT_LINES)}`);
+    return cluster.length?`${word} (${cluster.join(' | ')})`:word;
+  });
+
+  // Step 4: Glitch char overlay
   const glitchChars=['̶','̴','͎','̵','̷'];
-  const glitched=chunks.join(' ').split('').map(c=>(Math.random()<.025&&c!==' ')?c+rnd(glitchChars):c).join('');
+  const glitched=withInterrupts.join(' ')
+    .split('')
+    .map(c=>(Math.random()<.025&&c!==' ')?c+rnd(glitchChars):c)
+    .join('');
+
   return '[UNHINGED] '+glitched+' [END_TRANSMISSION??]';
 }
 
@@ -732,14 +760,15 @@ function chaosIngredients(){
 }
 
 function applyPreset(name){
-  const P={
+  const PRESET_MAP={
     sad:     {mode:'emotional', mod:{weirdness:20,drama:85,absurdity:15},  fi:{MOOD:'nostalgic for things that never happened',TWIST:'everyone already knew'}},
     ridiculous:{mode:'absurd',  mod:{weirdness:95,drama:10,absurdity:100}, fi:{MOOD:'aggressively neutral',TWIST:'gravity decided to take a vacation'}},
-    twist:   {mode:'chaotic',   mod:{weirdness:70,drama:70,absurdity:70},  fi:{TWIST:rnd(['the narrator lied','wrong universe','the ending happened first and had to wait around'])}},
+    twist:   {mode:'chaotic',   mod:{weirdness:70,drama:70,absurdity:70},  fi:null}, // twist picked lazily below
     wholesome:{mode:'emotional',mod:{weirdness:30,drama:50,absurdity:20},  fi:{MOOD:'exhausted but heroic',TWIST:'it was a test'}},
     horror:  {mode:'short',     mod:{weirdness:60,drama:80,absurdity:30},  fi:{MOOD:'suspicious calm',TWIST:'someone disappears slowly'}},
     poetic:  {mode:'emotional', mod:{weirdness:40,drama:60,absurdity:25},  fi:{STYLE:'poetic',MOOD:'melancholy but funny'}},
-  }[name];
+  };
+  const P=PRESET_MAP[name];
   if(!P) return;
   setMode(P.mode);
   state.modifiers={...P.mod};
@@ -749,7 +778,14 @@ function applyPreset(name){
   document.getElementById('weird-val').textContent=P.mod.weirdness;
   document.getElementById('drama-val').textContent=P.mod.drama;
   document.getElementById('absurd-val').textContent=P.mod.absurdity;
-  if(P.fi) Object.entries(P.fi).forEach(([cat,tag])=>{
+  // Clear previous tag selections
+  Object.keys(state.selected).forEach(c=>state.selected[c]=new Set());
+  document.querySelectorAll('.tag.selected').forEach(t=>t.classList.remove('selected'));
+  // Lazy twist for the twist preset
+  const fi=name==='twist'
+    ?{TWIST:rnd(['the narrator lied','wrong universe','the ending happened first and had to wait around'])}
+    :P.fi;
+  if(fi) Object.entries(fi).forEach(([cat,tag])=>{
     if(!state.selected[cat]) state.selected[cat]=new Set();
     state.selected[cat].add(tag);
     document.querySelector(`.tag[data-category="${cat}"][data-tag="${tag}"]`)?.classList.add('selected');
